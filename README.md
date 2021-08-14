@@ -176,9 +176,11 @@ Note that you **cannot** open the DevTools window while using this debug configu
 
 ---
 
-### Note on Third-Party Usage
+### Credits
 
-Please give credit to the original author and provide a link to the original source. This is free software, please do at least this much.
+This is a fork of __HeliosLauncher__ by _dscalzi_ and _Aventium Softworks_. Please honour their work by joining their discord.
+
+[![discord](https://discordapp.com/api/guilds/211524927831015424/embed.png?style=banner3)][discord]
 
 ---
 
@@ -190,7 +192,7 @@ Please give credit to the original author and provide a link to the original sou
 
 The best way to contact the developers is on Discord.
 
-[![discord](https://discordapp.com/api/guilds/211524927831015424/embed.png?style=banner3)][discord]
+[![discord2](https://discord.com/api/guilds/872856682567454720/embed.png?style=banner3)][discord2]
 
 ---
 
@@ -203,6 +205,7 @@ The best way to contact the developers is on Discord.
 [rendererprocess]: https://electronjs.org/docs/tutorial/application-architecture#main-and-renderer-processes 'Renderer Process'
 [chromedebugger]: https://marketplace.visualstudio.com/items?itemName=msjsdiag.debugger-for-chrome 'Debugger for Chrome'
 [discord]: https://discord.gg/zNWUXdt 'Discord'
+[discord2]: https://discord.gg/9Q3brQVQZN 'Discord'
 [wiki]: https://github.com/dscalzi/HeliosLauncher/wiki 'wiki'
 [nebula]: https://github.com/dscalzi/Nebula 'dscalzi/Nebula'
 [v2branch]: https://github.com/dscalzi/HeliosLauncher/tree/ts-refactor 'v2 branch'
