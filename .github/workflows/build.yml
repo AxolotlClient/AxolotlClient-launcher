@@ -29,8 +29,12 @@ jobs:
           release: ${{ startsWith(github.ref, 'refs/tags/v') }}
       - name: Generate Artifacts
         run: |
+          npm install register-scheme
           npm install
-          npm run all
+          npm audit fix
+          npm run dist:linux
+          npm run dist:mac
+          npm run dist:win
           
       - name: Pack Artifacts
         uses: actions/upload-artifact@v2.2.4
