@@ -40,5 +40,5 @@ jobs:
         uses: actions/upload-artifact@v2.2.4
         with: 
           name: AxolotlClient-Automated build
-          #path: ./dist/*.AppImage, ./dist/*.exe, ./dist/*.dmg
-          path: ./dist/*
+          path: ./dist/AxolotlClient-${version}*#.AppImage, ./dist/*.exe, ./dist/*.dmg
+          #path: ./dist/*
