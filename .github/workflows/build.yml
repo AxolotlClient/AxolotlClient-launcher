@@ -35,6 +35,8 @@ jobs:
           npm run dist:linux
           npm run dist:mac
           npm run dist:win
+        with:
+          github_token: ${{ secrets.github_token }}
           
       - name: Pack Artifacts
         uses: actions/upload-artifact@v2.2.4
