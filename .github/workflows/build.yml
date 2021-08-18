@@ -40,4 +40,4 @@ jobs:
         uses: actions/upload-artifact@v2.2.4
         with: 
           name: AxolotlClient-Automated build
-          path: ./dist/*
+          path: ./dist/AxolotlClient-Automated build.*
