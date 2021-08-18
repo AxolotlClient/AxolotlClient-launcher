@@ -20,8 +20,8 @@ builder.build({
     config: {
         appId: 'AxolotlClient',
         productName: 'AxolotlClient',
-        artifactName: '${productName}-setup-${version}.${ext}',
-        copyright: 'Copyright © 2021 MoehreAG & Finalium Network & Daniel Scalzi',
+        artifactName: '${productName}-${version}.${ext}',
+        copyright: 'Copyright © MoehreAG, Finalium Network, Daniel Scalzi',
         directories: {
             buildResources: 'build',
             output: 'dist'
@@ -46,10 +46,10 @@ builder.build({
         },
         linux: {
             target: 'AppImage',
-            maintainer: 'MoehreAG, Daniel Scalzi',
+            maintainer: 'MoehreAG',
             vendor: 'MoehreAG',
-            synopsis: 'Modded Minecraft Launcher',
-            description: 'Minecraft Client based on fabric. All mods, configurations, and updates are handled automatically.',
+            synopsis: 'Custom Modded Minecraft Launcher',
+            description: 'Modded Minecraft Client based on fabric. All mods, configurations, and updates are handled automatically.',
             category: 'Game'
         },
         compression: 'maximum',
