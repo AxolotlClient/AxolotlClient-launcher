@@ -92,17 +92,14 @@ exports.addDropinMods = function(files, modsdir) {
  * @param {string} modsDir The path to the mods directory.
  * @param {string} fullName The fullName of the discovered mod to delete.
  * 
- * @returns {Promise.<boolean>} True if the mod was deleted, otherwise false.
+ * @returns {boolean} True if the mod was deleted, otherwise false.
  */
-exports.deleteDropinMod = async function(modsDir, fullName){
-    try {
-        await shell.trashItem(path.join(modsDir, fullName))
-        return true
-    } catch(error) {
+exports.deleteDropinMod = function(modsDir, fullName){
+    const res = shell.moveItemToTrash(path.join(modsDir, fullName))
+    if(!res){
         shell.beep()
-        console.error('Error deleting drop-in mod.', error)
-        return false
     }
+    return res
 }
 
 /**

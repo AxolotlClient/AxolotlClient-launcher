@@ -17,7 +17,7 @@ const checkmarkContainer    = document.getElementById('checkmarkContainer')
 const loginRememberOption   = document.getElementById('loginRememberOption')
 const loginButton           = document.getElementById('loginButton')
 const loginForm             = document.getElementById('loginForm')
-const loginMSButton
+const loginMSButton         = document.getElementById('loginMSButton')
 
 // Control variables.
 let lu = false, lp = false
@@ -109,11 +109,6 @@ loginUsername.addEventListener('input', (e) => {
 })
 loginPassword.addEventListener('input', (e) => {
     validatePassword(e.target.value)
-})
-
-loginMSButton.addEventListener('click', (event) => {
-    loginMSButton.disabled = true
-    ipcRenderer.send('openMSALoginWindow', 'open')
 })
 
 /**
@@ -303,6 +298,11 @@ loginButton.addEventListener('click', () => {
         loggerLogin.log('Error while logging in.', err)
     })
 
+})
+
+loginMSButton.addEventListener('click', (event) => {
+    loginMSButton.disabled = true
+    ipcRenderer.send('openMSALoginWindow', 'open')
 })
 
 ipcRenderer.on('MSALoginWindowReply', (event, ...args) => {

@@ -23,7 +23,7 @@ class ProcessBuilder {
         this.forgeData = forgeData
         this.authUser = authUser
         this.launcherVersion = launcherVersion
-        this.forgeModListFile = path.join(this.gameDir, 'forgeMods.list') // 1.13+
+        this.forgeModListFile = path.join(this.gameDir, 'ModList.txt') // 1.13+
         this.fmlDir = path.join(this.gameDir, 'forgeModList.json')
         this.llDir = path.join(this.gameDir, 'liteloaderModList.json')
         this.libPath = path.join(this.commonDir, 'libraries')
@@ -343,7 +343,7 @@ class ProcessBuilder {
 
         // Java Arguments
         if(process.platform === 'darwin'){
-            args.push('-Xdock:name=HeliosLauncher')
+            args.push('-Xdock:name=FinaLauncher')
             args.push('-Xdock:icon=' + path.join(__dirname, '..', 'images', 'minecraft.icns'))
         }
         args.push('-Xmx' + ConfigManager.getMaxRAM())
@@ -381,7 +381,7 @@ class ProcessBuilder {
 
         // Java Arguments
         if(process.platform === 'darwin'){
-            args.push('-Xdock:name=HeliosLauncher')
+            args.push('-Xdock:name=AxolotlClient')
             args.push('-Xdock:icon=' + path.join(__dirname, '..', 'images', 'minecraft.icns'))
         }
         args.push('-Xmx' + ConfigManager.getMaxRAM())
@@ -483,7 +483,7 @@ class ProcessBuilder {
                             val = args[i].replace(argDiscovery, tempNativePath)
                             break
                         case 'launcher_name':
-                            val = args[i].replace(argDiscovery, 'Helios-Launcher')
+                            val = args[i].replace(argDiscovery, 'AxolotlClient')
                             break
                         case 'launcher_version':
                             val = args[i].replace(argDiscovery, this.launcherVersion)
@@ -596,7 +596,7 @@ class ProcessBuilder {
         }
         
         // Mod List File Argument
-        mcArgs.push('--modListFile')
+        mcArgs.push('--fabric.addMods=')
         if(this._lteMinorVersion(9)) {
             mcArgs.push(path.basename(this.fmlDir))
         } else {
