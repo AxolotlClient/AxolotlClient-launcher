@@ -32,7 +32,10 @@
 
 This is not an exhaustive list. Download and install the launcher to gauge all it can do!
 
-#### Need Help? [Check the wiki.][wiki]
+#### Need Help? 
+
+ * Contact us on Discord
+ * Report an [Issue][issue]
 
 #### Like the project? Leave a ⭐ star on the repository!
 
@@ -77,3 +80,4 @@ The best way to contact the developers is on Discord.
 
 [discord]: https://discord.gg/zNWUXdt 'Discord'
 [discord2]: https://discord.gg/9Q3brQVQZN 'Discord'
+[issue]: https://github.com/moehreag/AxolotlClient/issues
