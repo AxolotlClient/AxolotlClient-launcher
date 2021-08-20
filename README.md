@@ -3,7 +3,7 @@
 <h1 align="center">AxolotlClient</h1>
 
 <em><h5 align="center">(fork of HeliosLauncher, formerly known as Electron Launcher)</h5></em>
-<p align="center"[<img src="https://img.shields.io/github/downloads/moehreag/AxolotlClient/total.svg?style=for-the-badge" alt="downloads">](https://github.com/moehreag/AxolotlClient/releases)></p>
+[<p align="center"><img src="https://img.shields.io/github/downloads/moehreag/AxolotlClient/total.svg?style=for-the-badge" alt="downloads">](https://github.com/moehreag/AxolotlClient/releases) height="28px" alt="stark"></p>
 
 <p align="center">Join modded servers without worrying about installing Java, Fabric, or other mods. We'll handle that for you.</p>
 
