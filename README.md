@@ -7,7 +7,7 @@
 
 <p align="center">Join modded servers without worrying about installing Java, Fabric, or other mods. We'll handle that for you.</p>
 
-[![](http:/195.128.102.114/axoclient/files/screenshot-1.png)]
+<p align="center"><img src="./build/screenshot-1.png" width="150px" height="150px" alt="1st Screenshot"></p>
 <!--![Screenshot 2](https://i.imgur.com/x3B34n1.png)-->
 
 ## Features
