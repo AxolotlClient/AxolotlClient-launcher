@@ -7,7 +7,7 @@
 
 <p align="center">Join modded servers without worrying about installing Java, Fabric, or other mods. We'll handle that for you.</p>
 
-<p align="center"><img src="./build/screenshot-1.png" width="1037px" height="550px" alt="1st Screenshot"></p>
+<p align="center"><img src="./build/screenshot-1.png" width="1037px" height="500px" alt="1st Screenshot"></p>
 <!--![Screenshot 2](https://i.imgur.com/x3B34n1.png)-->
 
 ## Features
