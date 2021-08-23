@@ -1833,6 +1833,9 @@ class AssetGuard extends EventEmitter {
                     console.log('An item in ' + identifier + ' failed to process')
                 } else {
                     console.log('All ' + identifier + ' have been processed successfully')
+                    if(identifier === 'forge'){
+                        self.emit('complete', 'download')
+                    }
                 }
 
                 //self.totaldlsize -= dlTracker.dlsize

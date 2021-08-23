@@ -463,7 +463,7 @@ function asyncSystemScan(mcVersion, launchAfter = true){
 // Keep reference to Minecraft Process
 let proc
 // Is DiscordRPC enabled
-let hasRPC = false
+let hasRPC = true
 // Joined server regex
 // Change this if your server uses something different.
 const GAME_JOINED_REGEX = /\[.+\]: Sound engine started/
@@ -555,9 +555,10 @@ function dlAsync(login = true){
                     setLaunchDetails('Validating miscellaneous file integrity..')
                     break
                 case 'files':
-                    setLaunchPercentage(100, 100)
+                    setLaunchPercentage(90, 100)
                     loggerLaunchSuite.log('File validation complete.')
                     setLaunchDetails('Downloading files..')
+                    //setLaunchPercentage()
                     break
             }
         } else if(m.context === 'progress'){

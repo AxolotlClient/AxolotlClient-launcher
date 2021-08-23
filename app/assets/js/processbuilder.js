@@ -288,10 +288,9 @@ class ProcessBuilder {
         if(writeBuffer) {
             fs.writeFileSync(this.forgeModListFile, writeBuffer, 'UTF-8')
             return [
-                '--fml.mavenRoots',
-                path.join('..', '..', 'common', 'modstore'),
-                '--fml.modLists',
-                this.forgeModListFile
+                //'--fml.mavenRoots',
+                //path.join('..', '..', 'common', 'modstore'),
+                '--fabric.addMods=@'+this.forgeModListFile
             ]
         } else {
             return []
