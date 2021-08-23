@@ -64,7 +64,7 @@
                     </label>
                 </div>
             </div>
-            <div class="settingsFieldContainer">
+            <!--<div class="settingsFieldContainer">
                 <div class="settingsFieldLeft">
                     <span class="settingsFieldTitle">Automatically connect to the server on launch.</span>
                 </div>
@@ -74,7 +74,7 @@
                         <span class="toggleSwitchSlider"></span>
                     </label>
                 </div>
-            </div>
+            </div>-->
             <div class="settingsFieldContainer">
                 <div class="settingsFieldLeft">
                     <span class="settingsFieldTitle">Launch game process detached from launcher.</span>
@@ -186,7 +186,7 @@
             <div class="settingsFileSelContainer">
                 <div class="settingsFileSelTitle">Java Executable</div>
                 <div class="settingsFileSelContent">
-                    <div id="settingsJavaExecDetails">Selected: Java 8 Update 172 (x64)</div>
+                    <div id="settingsJavaExecDetails">Selected: Java 16 (64)</div>
                     <div class="settingsFileSelActions">
                         <div class="settingsFileSelIcon">
                             <svg class="settingsFileSelSVG" x="0px" y="0px" viewBox="0 0 305.001 305.001">
@@ -206,7 +206,7 @@
                         <button class="settingsFileSelButton" id="settingsJavaExecSel" dialogTitle="Select Java Executable" dialogDirectory="false">Choose File</button>
                     </div>
                 </div>
-                <div class="settingsFileSelDesc">The Java executable is validated before game launch. <strong>Requires Java 8 x64.</strong><br>The path should end with <strong>bin<%= process.platform === 'win32' ? '\\javaw.exe' : '/java' %></strong>.</div>
+                <div class="settingsFileSelDesc">The Java executable is validated before game launch. <strong>Requires Java 16 x64.</strong><br>The path should end with <strong>bin<%= process.platform === 'win32' ? '\\javaw.exe' : '/java' %></strong>.</div>
             </div>
             <div id="settingsJVMOptsContainer">
                 <div id="settingsJVMOptsTitle">Additional JVM Options</div>

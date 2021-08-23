@@ -276,7 +276,7 @@ class JavaGuard extends EventEmitter {
      * 
      * @returns {Promise.<OpenJDKData>} Promise which resolved to an object containing the JRE download data.
      */
-    static _latestOpenJDK(major = '8'){
+    static _latestOpenJDK(major = '16'){
 
         if(process.platform === 'darwin') {
             return this._latestCorretto(major)
@@ -490,9 +490,9 @@ class JavaGuard extends EventEmitter {
                 let verString = props[i].split('=')[1].trim()
                 console.log(props[i].trim())
                 const verOb = JavaGuard.parseJavaRuntimeVersion(verString)
-                if(verOb.major < 9){
+                if(verOb.major < 17){
                     // Java 8
-                    if(verOb.major === 8 && verOb.update > 52){
+                    if(verOb.major === 16){
                         meta.version = verOb
                         ++checksum
                         if(checksum === goal){
@@ -500,9 +500,9 @@ class JavaGuard extends EventEmitter {
                         }
                     }
                 } else {
-                    // Java 9+
+                    // Java 16+
                     if(Util.mcVersionAtLeast('1.13', this.mcVersion)){
-                        console.log('Java 9+ not yet tested.')
+                        console.log('Java 17+ not tested.')
                         /* meta.version = verOb
                         ++checksum
                         if(checksum === goal){
@@ -597,8 +597,8 @@ class JavaGuard extends EventEmitter {
 
             // Keys for Java 1.8 and prior:
             const regKeys = [
-                '\\SOFTWARE\\JavaSoft\\Java Runtime Environment',
-                '\\SOFTWARE\\JavaSoft\\Java Development Kit'
+                '\\SOFTWARE\\JavaSoft\\JRE',
+                '\\SOFTWARE\\JavaSoft\\JDK'
             ]
 
             let keysDone = 0
@@ -638,8 +638,8 @@ class JavaGuard extends EventEmitter {
                                     for(let j=0; j<javaVers.length; j++){
                                         const javaVer = javaVers[j]
                                         const vKey = javaVer.key.substring(javaVer.key.lastIndexOf('\\')+1)
-                                        // Only Java 8 is supported currently.
-                                        if(parseFloat(vKey) === 1.8){
+                                        // Only Java 16 is supported currently.
+                                        if(parseFloat(vKey) === 1.16){
                                             javaVer.get('JavaHome', (err, res) => {
                                                 const jHome = res.value
                                                 if(jHome.indexOf('(x86)') === -1){
@@ -659,7 +659,7 @@ class JavaGuard extends EventEmitter {
                                         } else {
 
                                             // SUBKEY DONE
-                                            // NOT JAVA 8
+                                            // NOT JAVA 16
 
                                             numDone++
                                             if(numDone === javaVers.length){
@@ -1534,12 +1534,14 @@ class AssetGuard extends EventEmitter {
                     if(Util.isForgeGradle3(server.getMinecraftVersion(), ob.getVersion())){
                         // Read Manifest
                         for(let sub of ob.getSubModules()){
+                            console.log(sub)
                             if(sub.getType() === DistroManager.Types.VersionManifest){
                                 resolve(JSON.parse(fs.readFileSync(sub.getArtifact().getPath(), 'utf-8')))
                                 return
                             }
                         }
                         reject('No forge version manifest found!')
+                        console.log(server.getMinecraftVersion(), ob.getVersion(), Util.isForgeGradle3(server.getMinecraftVersion(), ob.getVersion()),JSON.parse(fs.readFileSync(sub.getArtifact().getPath(), 'utf-8')))
                         return
                     } else {
                         let obArtifact = ob.getArtifact()

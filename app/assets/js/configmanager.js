@@ -77,16 +77,16 @@ const DEFAULT_CONFIG = {
             executable: null,
             jvmOptions: [
                 '-XX:+UseG1GC',
-                '-XX:+CMSIncrementalMode',
+                //'-XX:+CMSIncrementalMode',
                 '-XX:-UseAdaptiveSizePolicy',
                 '-Xmn128M'
             ],
         },
         game: {
-            resWidth: 1280,
-            resHeight: 720,
-            fullscreen: false,
-            autoConnect: true,
+            resWidth: 800,
+            resHeight: 480,
+            fullscreen: true,
+            autoConnect: false,
             launchDetached: true
         },
         launcher: {
@@ -207,7 +207,7 @@ exports.isFirstLaunch = function(){
  * @returns {string} The name of the folder.
  */
 exports.getTempNativeFolder = function(){
-    return 'WCNatives'
+    return 'AxolotlClient-temp'
 }
 
 // System Settings (Unconfigurable on UI)

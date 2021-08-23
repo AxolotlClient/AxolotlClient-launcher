@@ -15,12 +15,12 @@ const logger = LoggerUtil('%c[ProcessBuilder]', 'color: #003996; font-weight: bo
 
 class ProcessBuilder {
 
-    constructor(distroServer, versionData, forgeData, authUser, launcherVersion){
+    constructor(distroServer, versionData, authUser, launcherVersion){
         this.gameDir = path.join(ConfigManager.getInstanceDirectory(), distroServer.getID())
         this.commonDir = ConfigManager.getCommonDirectory()
         this.server = distroServer
         this.versionData = versionData
-        this.forgeData = forgeData
+        this.forgeData = ""//net.fabricmc.loader.launch.knot.knotClient" //forgeData
         this.authUser = authUser
         this.launcherVersion = launcherVersion
         this.forgeModListFile = path.join(this.gameDir, 'ModList.txt') // 1.13+
@@ -59,6 +59,7 @@ class ProcessBuilder {
             args = args.concat(this.constructModList(modObj.fMods))
         }
 
+        logger.log('Launch Arguments:', args)
 
         const child = child_process.spawn(ConfigManager.getJavaExecutable(), args, {
             cwd: this.gameDir,
@@ -83,13 +84,11 @@ class ProcessBuilder {
         })
         child.on('close', (code, signal) => {
             logger.log('Exited with code', code)
-            logger.log(tempNativePath)
             fs.remove(tempNativePath, (err) => {
                 if(err){
                     logger.warn('Error while deleting temp dir', err)
                 } else {
                     logger.log('Temp dir deleted successfully.')
-                    showLaunchFailure('Game Closed','We hope you enjoyed!')
                 }
             })
         })
@@ -300,7 +299,7 @@ class ProcessBuilder {
     }
 
     _processAutoConnectArg(args){
-        /**if(ConfigManager.getAutoConnect() && this.server.isAutoConnect()){
+        if(ConfigManager.getAutoConnect() && this.server.isAutoConnect()){
             const serverURL = new URL('my://' + this.server.getAddress())
             args.push('--server')
             args.push(serverURL.hostname)
@@ -308,7 +307,7 @@ class ProcessBuilder {
                 args.push('--port')
                 args.push(serverURL.port)
             }
-        }*/
+        }
     }
 
     /**
@@ -334,7 +333,7 @@ class ProcessBuilder {
      * @param {string} tempNativePath The path to store the native libraries.
      * @returns {Array.<string>} An array containing the full JVM arguments for this process.
      */
-    _constructJVMArguments112(mods, tempNativePath){
+    /**_constructJVMArguments112(mods, tempNativePath){
 
         let args = []
 
@@ -359,7 +358,7 @@ class ProcessBuilder {
         args = args.concat(this._resolveForgeArgs())
 
         return args
-    }
+    }*/
 
     /**
      * Construct the argument array that will be passed to the JVM process.
@@ -374,10 +373,12 @@ class ProcessBuilder {
     _constructJVMArguments113(mods, tempNativePath){
 
         const argDiscovery = /\${*(.*)}/
+        let args = []
+        
+        args.push('-DFabricMcEmu= net.minecraft.client.main.Main')
 
         // JVM Arguments First
-        let args = this.versionData.arguments.jvm
-        //args.push('-Djava.library.path=')
+        //let args = this.versionData.arguments.jvm
 
         //args.push('-Dlog4j.configurationFile=D:\\WesterosCraft\\game\\common\\assets\\log_configs\\client-1.12.xml')
 
@@ -391,10 +392,12 @@ class ProcessBuilder {
         args = args.concat(ConfigManager.getJVMOptions())
 
         // Main Java Class
-        args.push(this.forgeData.mainClass)
+        args.push(forgeData.main)
+        //args.push('net.minecraft.client.main.Main')
+        //args.push('net.fabricmc.loader.launch.knot.knotClient')
 
         // Vanilla Arguments
-        args = args.concat(this.versionData.arguments.game)
+        //args = args.concat(this.versionData.arguments.game)
 
         for(let i=0; i<args.length; i++){
             if(typeof args[i] === 'object' && args[i].rules != null){
@@ -473,7 +476,7 @@ class ProcessBuilder {
                             val = 'mojang'
                             break
                         case 'version_type':
-                            val = 'AxolotlClient'
+                            val = this.versionData.type
                             break
                         case 'resolution_width':
                             val = ConfigManager.getGameWidth()
@@ -501,6 +504,7 @@ class ProcessBuilder {
             }
         }
 
+        /**
         // Autoconnect
         let isAutoconnectBroken
         try {
@@ -520,7 +524,8 @@ class ProcessBuilder {
         
 
         // Forge Specific Arguments
-        //args = args.concat(this.forgeData.arguments.game)
+       /args = args.concat(this.forgeData.arguments.game)
+       */
 
         // Filter null values
         args = args.filter(arg => {
