@@ -5,7 +5,7 @@
 <em><h5 align="center">(fork of HeliosLauncher, formerly known as Electron Launcher)</h5></em>
 [<p align="center"><img src="https://img.shields.io/github/downloads/moehreag/AxolotlClient/total.svg?style=for-the-badge" alt="downloads">](https://github.com/moehreag/AxolotlClient/releases)</p>
 
-<p align="center">Join modded servers without worrying about installing Java, Fabric, or other mods. We'll handle that for you.</p>
+<p align="center">Join servers without worrying about installing Java, Fabric, or other mods. We'll handle that for you.</p>
 
 ![Screenshot1](./build/screenshot-1.png)
 <!--![Screenshot 2](https://i.imgur.com/x3B34n1.png)-->
@@ -21,7 +21,7 @@
 * ☕ **Automatic Java validation.**
   * If you have an incompatible version of Java installed, we'll install the right one *for you*.
   * You do not need to have Java installed to run the launcher.
-* 📰 News feed natively built into the launcher.
+* 📰 News feed natively built into the launcher. (COMING SOON)
 * ⚙️ Intuitive settings management, including a Java control panel.
 * Supports all of our versions.
   * Switch between version configurations with ease.
@@ -56,8 +56,6 @@ If you download from the [Releases](https://github.com/moehreag/AxolotlClient/re
 | Platform | File |
 | -------- | ---- |
 | Windows x64 | `AxolotlClient-VERSION.exe` |
-| macOS x64 | `AxolotlClient-VERSION.dmg` |
-| macOS arm64 | `AxolotlClient-VERSION-arm64.dmg` |
 | Linux x64 | `AxolotlClient-VERSION.AppImage` |
 
 
@@ -69,7 +67,7 @@ This is a fork of __HeliosLauncher__ by _dscalzi_ and _Aventium Softworks_. Plea
 
 ---
 
-The best way to contact the developers is on Discord.
+The best way to contact the developers (me) is on Discord.
 
 [![discord2](https://discord.com/api/guilds/872856682567454720/embed.png?style=banner2)][discord2]
 
