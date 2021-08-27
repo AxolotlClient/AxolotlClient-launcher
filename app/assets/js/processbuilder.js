@@ -83,13 +83,20 @@ class ProcessBuilder {
         })
         child.on('close', (code, signal) => {
             logger.log('Exited with code', code)
-            logger.log(tempNativePath)
+            //logger.log(tempNativePath)
             fs.remove(tempNativePath, (err) => {
                 if(err){
                     logger.warn('Error while deleting temp dir', err)
                 } else {
                     logger.log('Temp dir deleted successfully.')
                     showLaunchFailure('Game Closed','We hope you enjoyed!')
+                }
+            })
+            fs.remove(this.gameDir + "mods", (err) => {
+                if(err){
+                  logger.warn('Error while deleting stored mods to allow for constant updating')
+                } else {
+                  logger.log('Stored mods were removed successfully')
                 }
             })
         })
