@@ -29,4 +29,3 @@ jobs:
     - run: npm ci
     - run: npm run dist:linux
     - run: npm run dist:win
-    - run: npm test
