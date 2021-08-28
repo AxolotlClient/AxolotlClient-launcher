@@ -92,7 +92,7 @@ class ProcessBuilder {
                     showLaunchFailure('Game Closed','We hope you enjoyed!')
                 }
             })
-            fs.remove(this.gameDir + "mods", (err) => {
+            fs.remove(this.gameDir + "/mods", (err) => {
                 if(err){
                   logger.warn('Error while deleting stored mods to allow for constant updating')
                 } else {
