@@ -537,7 +537,7 @@ exports.pullRemote = function(){
         return exports.pullLocal()
     }
     return new Promise((resolve, reject) => {
-        const distroURL = 'http://195.128.102.114/axoclient/files/distribution.json'
+        const distroURL = 'http://v2202010130453128524.happysrv.de/axoclient/files/distribution.json'
         const opts = {
             url: distroURL,
             timeout: 2500
