@@ -292,7 +292,7 @@ class JavaGuard extends EventEmitter {
     
     static _latestJDKlin(major) {
 
-        const url = `https://github.com/adoptium/temurin16-binaries/releases/download/jdk16u-2021-08-28-09-48-beta/OpenJDK16U-debugimage_x64_linux_hotspot_2021-08-27-23-30.tar.gz`
+        const url = `https://api.adoptopenjdk.net/v2/latestAssets/nightly/openjdk16?os=linux&arch=x64&heap_size=normal&openjdk_impl=hotspot&type=jre`
         
         return new Promise((resolve, reject) => {
             request({url, json: true}, (err, resp, body) => {
@@ -312,7 +312,7 @@ class JavaGuard extends EventEmitter {
 
     static _latestJDKMac(major) {
 
-        const url = `https://github.com/adoptium/temurin16-binaries/releases/download/jdk16u-2021-08-28-09-48-beta/OpenJDK16U-debugimage_x64_mac_hotspot_2021-08-27-23-30.tar.gz`
+        const url = `https://api.adoptopenjdk.net/v2/latestAssets/nightly/openjdk16?os=mac&arch=x64&heap_size=normal&openjdk_impl=hotspot&type=jre`
         
         return new Promise((resolve, reject) => {
             request({url, json: true}, (err, resp, body) => {
@@ -332,7 +332,7 @@ class JavaGuard extends EventEmitter {
 
     static _latestJDKWin(major) {
         
-        const url = `https://github.com/adoptium/temurin16-binaries/releases/download/jdk16u-2021-08-28-09-48-beta/OpenJDK16U-debugimage_x64_windows_hotspot_2021-08-27-23-30.zip`
+        const url = `https://api.adoptopenjdk.net/v2/latestAssets/nightly/openjdk16?os=windows&arch=x64&heap_size=normal&openjdk_impl=hotspot&type=jre`
 
         return new Promise((resolve, reject) => {
             request({url, json: true}, (err, resp, body) => {
@@ -1578,7 +1578,7 @@ class AssetGuard extends EventEmitter {
 
     _enqueueOpenJDK(dataDir){
         return new Promise((resolve, reject) => {
-            JavaGuard._latestOpenJDK('8').then(verData => {
+            JavaGuard._latestOpenJDK('16').then(verData => {
                 if(verData != null){
 
                     dataDir = path.join(dataDir, 'runtime', 'x64')
