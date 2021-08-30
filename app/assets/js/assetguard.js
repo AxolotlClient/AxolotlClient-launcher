@@ -278,18 +278,18 @@ class JavaGuard extends EventEmitter {
      */
     static _latestOpenJDK(major = '16'){
 
-        if(process.platform === 'darwin') {
-            return this._latestCorretto(major)
+        if(process.platform === 'win32') {
+            return this._latestJDKWin(major)
         } else {
-            return this._latestAdoptOpenJDK(major)
+            return this._latestJDKUnix(major)
         }
     }
 
-    static _latestAdoptOpenJDK(major) {
+    static _latestJDKUnix(major) {
 
         const sanitizedOS = process.platform === 'win32' ? 'windows' : (process.platform === 'darwin' ? 'mac' : process.platform)
 
-        const url = `https://api.adoptopenjdk.net/v2/latestAssets/nightly/openjdk${major}?os=${sanitizedOS}&arch=x64&heap_size=normal&openjdk_impl=hotspot&type=jre`
+        const url = `https://github.com/adoptium/temurin16-binaries/releases/download/jdk16u-2021-08-28-09-48-beta/OpenJDK16U-debugimage_x64_${sanitizedOS}_hotspot_2021-08-27-23-30.tar.gz`
         
         return new Promise((resolve, reject) => {
             request({url, json: true}, (err, resp, body) => {
@@ -307,30 +307,9 @@ class JavaGuard extends EventEmitter {
 
     }
 
-    static _latestCorretto(major) {
-
-        let sanitizedOS, ext
-
-        switch(process.platform) {
-            case 'win32':
-                sanitizedOS = 'windows'
-                ext = 'zip'
-                break
-            case 'darwin':
-                sanitizedOS = 'macos'
-                ext = 'tar.gz'
-                break
-            case 'linux':
-                sanitizedOS = 'linux'
-                ext = 'tar.gz'
-                break
-            default:
-                sanitizedOS = process.platform
-                ext = 'tar.gz'
-                break
-        }
-
-        const url = `https://corretto.aws/downloads/latest/amazon-corretto-${major}-x64-${sanitizedOS}-jdk.${ext}`
+    static _latestJDKWin(major) {
+        
+        const url = `https://github.com/adoptium/temurin16-binaries/releases/download/jdk16u-2021-08-28-09-48-beta/OpenJDK16U-debugimage_x64_windows_hotspot_2021-08-27-23-30.zip`
 
         return new Promise((resolve, reject) => {
             request.head({url, json: true}, (err, resp) => {
