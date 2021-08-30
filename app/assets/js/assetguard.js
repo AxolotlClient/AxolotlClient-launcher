@@ -281,15 +281,37 @@ class JavaGuard extends EventEmitter {
         if(process.platform === 'win32') {
             return this._latestJDKWin(major)
         } else {
-            return this._latestJDKUnix(major)
+            if(process.platform === 'darwin') {
+                return this._latestJDKMac(major)
+            }
+        } else {
+            return this._latestJDKlin(major)
         }
     }
+    
+    static _latestJDKlin(major) {
 
-    static _latestJDKUnix(major) {
+        const url = `https://github.com/adoptium/temurin16-binaries/releases/download/jdk16u-2021-08-28-09-48-beta/OpenJDK16U-debugimage_x64_linux_hotspot_2021-08-27-23-30.tar.gz`
+        
+        return new Promise((resolve, reject) => {
+            request({url, json: true}, (err, resp, body) => {
+                if(!err && body.length > 0){
+                    resolve({
+                        uri: body[0].binary_link,
+                        size: body[0].binary_size,
+                        name: body[0].binary_name
+                    })
+                } else {
+                    resolve(null)
+                }
+            })
+        })
 
-        const sanitizedOS = process.platform === 'win32' ? 'windows' : (process.platform === 'darwin' ? 'mac' : process.platform)
+    }
 
-        const url = `https://github.com/adoptium/temurin16-binaries/releases/download/jdk16u-2021-08-28-09-48-beta/OpenJDK16U-debugimage_x64_${sanitizedOS}_hotspot_2021-08-27-23-30.tar.gz`
+    static _latestJDKMac(major) {
+
+        const url = `https://github.com/adoptium/temurin16-binaries/releases/download/jdk16u-2021-08-28-09-48-beta/OpenJDK16U-debugimage_x64_mac_hotspot_2021-08-27-23-30.tar.gz`
         
         return new Promise((resolve, reject) => {
             request({url, json: true}, (err, resp, body) => {
