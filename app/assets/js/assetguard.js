@@ -284,8 +284,9 @@ class JavaGuard extends EventEmitter {
             if(process.platform === 'darwin') {
                 return this._latestJDKMac(major)
             }
-        } else {
-            return this._latestJDKlin(major)
+            else {
+                return this._latestJDKlin(major)
+            }
         }
     }
     
@@ -334,12 +335,12 @@ class JavaGuard extends EventEmitter {
         const url = `https://github.com/adoptium/temurin16-binaries/releases/download/jdk16u-2021-08-28-09-48-beta/OpenJDK16U-debugimage_x64_windows_hotspot_2021-08-27-23-30.zip`
 
         return new Promise((resolve, reject) => {
-            request.head({url, json: true}, (err, resp) => {
-                if(!err && resp.statusCode === 200){
+            request({url, json: true}, (err, resp, body) => {
+                if(!err && body.length > 0){
                     resolve({
-                        uri: url,
-                        size: parseInt(resp.headers['content-length']),
-                        name: url.substr(url.lastIndexOf('/')+1)
+                        uri: body[0].binary_link,
+                        size: body[0].binary_size,
+                        name: body[0].binary_name
                     })
                 } else {
                     resolve(null)
