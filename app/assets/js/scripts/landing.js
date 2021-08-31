@@ -59,7 +59,11 @@ function setLaunchDetails(details){
 function setLaunchPercentage(value, max, percent = ((value/max)*100)){
     launch_progress.setAttribute('max', max)
     launch_progress.setAttribute('value', value)
-    launch_progress_label.innerHTML = percent + '%'
+    if (percent === null) {
+        launch_progress_label.innerHTML = ""
+    } else {
+        launch_progress_label.innerHTML = percent + '%'
+    }
 }
 
 /**
