@@ -29,3 +29,19 @@ jobs:
     - run: npm ci
     - run: npm run dist:linux
     - run: npm run dist:win
+    - run: npm run dist:mac
+  
+upload:
+  runs-on: ubuntu-latest
+    
+  strategy:
+    matrix:
+      node-version: [14.x]
+  steps:
+  - uses: actions/upload-artifact@v2
+  with:
+    name: AxolotlClient--automated build
+    path: |
+      dist/latest*
+      dist/AxolotlClient-*
+      dist/*.blockmap
