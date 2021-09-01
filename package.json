@@ -1,10 +1,10 @@
 {
   "name": "AxolotlClient",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "productName": "AxolotlClient",
   "description": "AxolotlClient for Minecraft:Java Edition",
   "author": "MoehreAG (https://github.com/moehreag/AxolotlClient)",
-  "license": "GPL-3",
+  "license": "MIT",
   "homepage": "http://195.128.102.114",
   "bugs": {
     "url": "https://github.com/moehreag/AxolotlClient/issues"
