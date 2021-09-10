@@ -57,6 +57,8 @@ If you download from the [Releases](https://github.com/moehreag/AxolotlClient/re
 | -------- | ---- |
 | Windows x64 | `AxolotlClient-VERSION.exe` |
 | Linux x64 | `AxolotlClient-VERSION.AppImage` |
+| MacOS x64 | `AxolotlClient-VERSION.dmg`|
+| MacOS arm64 | `AxolotlClient-VERSION-arm64.dmg`|
 
 
 ### Credits
