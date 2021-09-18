@@ -67,6 +67,12 @@ This is a fork of __HeliosLauncher__ by _dscalzi_ and _Aventium Softworks_. Plea
 
 [![discord](https://discordapp.com/api/guilds/211524927831015424/embed.png?style=banner2)][discord]
 
+# Other People
+
+RasenRamen: Had the Idea for the name
+
+kuchenag: Made the nice images
+
 ---
 
 The best way to contact the developers (me) is on Discord.
