@@ -3,7 +3,7 @@ const request = require('request')
 
 // Constants
 
-const clientId = 'de140eea-429a-4a6b-b67a-30ea6af614f3'
+const clientId = '402123a2-099c-4451-9daf-b98628db64b2'
 const tokenUri = 'https://login.microsoftonline.com/consumers/oauth2/v2.0/token'
 const authXBLUri = 'https://user.auth.xboxlive.com/user/authenticate'
 const authXSTSUri = 'https://xsts.auth.xboxlive.com/xsts/authorize'
