@@ -3,9 +3,9 @@
   "version": "1.0.3",
   "productName": "AxolotlClient",
   "description": "AxolotlClient for Minecraft:Java Edition",
-  "author": "MoehreAG (https://github.com/moehreag/AxolotlClient)",
+  "author": "MoehreAG",
   "license": "MIT",
-  "homepage": "http://195.128.102.114",
+  "homepage": "http://moehreag.duckdns.org",
   "bugs": {
     "url": "https://github.com/moehreag/AxolotlClient/issues"
   },
@@ -25,9 +25,9 @@
     "node": "14.x.x"
   },
   "dependencies": {
-    "@electron/remote": "^1.0.4",
-    "adm-zip": "^0.5.3",
-    "async": "^3.2.0",
+    "@electron/remote": "^2.0.1",
+    "adm-zip": "^0.5.7",
+    "async": "^3.2.1",
     "discord-rpc": "^3.2.0",
     "ejs": "^3.1.6",
     "ejs-electron": "^2.1.1",
@@ -42,9 +42,9 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "electron": "^12.0.0",
-    "electron-builder": "^22.10.5",
-    "eslint": "^7.21.0"
+    "electron": "^13.5.1",
+    "electron-builder": "^22.11.7",
+    "eslint": "^7.32.0"
   },
   "repository": {
     "type": "git",
