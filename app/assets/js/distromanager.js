@@ -537,7 +537,7 @@ exports.pullRemote = function(){
         return exports.pullLocal()
     }
     return new Promise((resolve, reject) => {
-        const distroURL = 'https://github.com/moehreag/AxolotlClient-files/blob/master/distribution.json'
+        const distroURL = 'https://github.com/moehreag/AxolotlClient-files/raw/master/distribution.json'
         const opts = {
             url: distroURL,
             timeout: 2500
