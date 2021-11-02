@@ -3,7 +3,7 @@ const request = require('request')
 
 // Constants
 
-const clientId = '402123a2-099c-4451-9daf-b98628db64b2'
+const clientId = '938592fc-8e01-4c6d-b56d-428c7d9cf5ea'
 const tokenUri = 'https://login.microsoftonline.com/consumers/oauth2/v2.0/token'
 const authXBLUri = 'https://user.auth.xboxlive.com/user/authenticate'
 const authXSTSUri = 'https://xsts.auth.xboxlive.com/xsts/authorize'
@@ -78,7 +78,7 @@ function getXSTSToken(XBLToken) {
 
                     case 2148916238: 
                         reject({
-                            message: 'Since you are not yet 18 years old, an adult must add you to a family in order for you to use NexusLauncher!'
+                            message: 'Since you are not yet 18 years old, an adult must add you to a family in order for you to use AxolotlClient!'
                         })
                         return
 
