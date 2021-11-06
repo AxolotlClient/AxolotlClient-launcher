@@ -85,35 +85,66 @@ function toggleOverlay(toggleState, dismissable = false, content = 'overlayConte
         } else {
             $('#overlayDismiss').hide()
         }
-        $('#overlayContainer').fadeIn({
-            duration: 250,
-            start: () => {
-                if(getCurrentView() === VIEWS.settings){
-                    document.getElementById('settingsContainer').style.backgroundColor = 'transparent'
+        if (process.platform === 'linux') {
+            $('#overlayContainerLinux').fadeIn({
+                duration: 250,
+                start: () => {
+                    if(getCurrentView() === VIEWS.settings){
+                        document.getElementById('settingsContainer').style.backgroundColor = 'transparent'
+                    }
                 }
-            }
-        })
+            })
+        } else {
+            $('#overlayContainer').fadeIn({
+                duration: 250,
+                start: () => {
+                    if(getCurrentView() === VIEWS.settings){
+                        document.getElementById('settingsContainer').style.backgroundColor = 'transparent'
+                    }
+                }
+            })
+        }
     } else {
         document.getElementById('main').removeAttribute('overlay')
         // Make things tabbable.
         $('#main *').removeAttr('tabindex')
-        $('#overlayContainer').fadeOut({
-            duration: 250,
-            start: () => {
-                if(getCurrentView() === VIEWS.settings){
-                    document.getElementById('settingsContainer').style.backgroundColor = 'rgba(0, 0, 0, 0.50)'
+        if (process.platform === 'linux') {
+            $('#overlayContainerLinux').fadeOut({
+                duration: 250,
+                start: () => {
+                    if(getCurrentView() === VIEWS.settings){
+                        document.getElementById('settingsContainer').style.backgroundColor = 'rgba(0, 0, 0, 0.50)'
+                    }
+                },
+                complete: () => {
+                    $('#' + content).parent().children().hide()
+                    $('#' + content).show()
+                    if(dismissable){
+                        $('#overlayDismiss').show()
+                    } else {
+                        $('#overlayDismiss').hide()
+                    }
                 }
-            },
-            complete: () => {
-                $('#' + content).parent().children().hide()
-                $('#' + content).show()
-                if(dismissable){
-                    $('#overlayDismiss').show()
-                } else {
-                    $('#overlayDismiss').hide()
+            })
+        } else {
+            $('#overlayContainer').fadeOut({
+                duration: 250,
+                start: () => {
+                    if(getCurrentView() === VIEWS.settings){
+                        document.getElementById('settingsContainer').style.backgroundColor = 'rgba(0, 0, 0, 0.50)'
+                    }
+                },
+                complete: () => {
+                    $('#' + content).parent().children().hide()
+                    $('#' + content).show()
+                    if(dismissable){
+                        $('#overlayDismiss').show()
+                    } else {
+                        $('#overlayDismiss').hide()
+                    }
                 }
-            }
-        })
+            })
+        }
     }
 }
 

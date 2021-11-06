@@ -3344,6 +3344,19 @@ input:checked + .toggleSwitchSlider:before {
     background: rgba(0, 0, 0, 0.50);
 }
 
+/* Overlay container on Linux systems, placed over the main div. */
+#overlayContainerLinux {
+    position: absolute;
+    z-index: 500;
+    top: 0px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.50);
+}
+
 /* Main overlay content. */
 #overlayContent {
     position: relative;
