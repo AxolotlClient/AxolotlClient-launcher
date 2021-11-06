@@ -1,6 +1,6 @@
 {
   "name": "AxolotlClient",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "productName": "AxolotlClient",
   "description": "AxolotlClient for Minecraft:Java Edition",
   "author": "MoehreAG",
@@ -22,7 +22,7 @@
     "lint": "eslint --config .eslintrc.json ."
   },
   "engines": {
-    "node": "14.x.x"
+    "node": "16.x.x"
   },
   "dependencies": {
     "@electron/remote": "^2.0.1",
@@ -42,7 +42,7 @@
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "electron": "^13.5.1",
+    "electron": "^13.6.1",
     "electron-builder": "^22.11.7",
     "eslint": "^7.32.0"
   },
