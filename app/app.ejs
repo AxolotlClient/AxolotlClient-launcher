@@ -15,7 +15,7 @@
         }
         #main {
             display: none;
-            height: calc(100% - 22px);
+            height: <%if (process.platform === 'linux') {%>100%<%} else {%>calc(100% - 22px)<%}%>;
             background: linear-gradient(to top, rgba(0, 0, 0, 0.75) 0%, rgba(0, 0, 0, 0) 100%);
             width: 100%;
             position: absolute;

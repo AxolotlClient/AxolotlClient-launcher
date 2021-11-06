@@ -88,7 +88,7 @@ ipcMain.on('distributionIndexDone', (event, res) => {
 
 // Disable hardware acceleration.
 // https://electronjs.org/docs/tutorial/offscreen-rendering
-app.disableHardwareAcceleration()
+//app.disableHardwareAcceleration()
 
 // https://github.com/electron/electron/issues/18397
 let MSALoginWindow = null
@@ -140,13 +140,25 @@ app.allowRendererProcessReuse = true
 // be closed automatically when the JavaScript object is garbage collected.
 let win
 
+let Frame = true
+function useFrame() {
+    if (process.platform === 'linux' ) {
+        useFrame = true
+    } else {
+        useFrame = false
+    }
+
+    return useFrame
+}
+
+
 function createWindow() {
 
     win = new BrowserWindow({
         width: 980,
         height: 552,
         icon: getPlatformIcon('SealCircle'),
-        frame: false,
+        frame: useFrame(),
         webPreferences: {
             preload: path.join(__dirname, 'app', 'assets', 'js', 'preloader.js'),
             nodeIntegration: true,
