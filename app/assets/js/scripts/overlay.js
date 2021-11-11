@@ -208,7 +208,7 @@ document.getElementById('serverSelectConfirm').addEventListener('click', () => {
         if(listings[i].hasAttribute('selected')){
             const serv = DistroManager.getDistribution().getServer(listings[i].getAttribute('servid'))
             updateSelectedServer(serv)
-            refreshServerStatus(true)
+            //refreshServerStatus(true)
             toggleOverlay(false)
             return
         }
