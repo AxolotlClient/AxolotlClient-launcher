@@ -21,13 +21,11 @@
 * ☕ **Automatic Java validation.**
   * If you have an incompatible version of Java installed, we'll install the right one *for you*.
   * You do not need to have Java installed to run the launcher.
-* 📰 News feed natively built into the launcher. (COMING SOON)
 * ⚙️ Intuitive settings management, including a Java control panel.
 * Supports all of our versions.
   * Switch between version configurations with ease.
   * View the player count of our server.
 * Automatic updates. That's right, the launcher updates itself.
-*  View the status of Mojang's services.
 
 This is not an exhaustive list. Download and install the launcher to gauge all it can do!
 
@@ -66,12 +64,6 @@ If you download from the [Releases](https://github.com/moehreag/AxolotlClient/re
 This is a fork of __HeliosLauncher__ by _dscalzi_ and _Aventium Softworks_. Please honour their work by joining their discord.
 
 [![discord](https://discordapp.com/api/guilds/211524927831015424/embed.png?style=banner2)][discord]
-
-__Other People__
-
-RasenRamen: Had the Idea for the name
-
-kuchenag: Made the nice images
 
 ---
 
