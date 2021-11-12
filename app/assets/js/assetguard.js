@@ -276,7 +276,7 @@ class JavaGuard extends EventEmitter {
      * 
      * @returns {Promise.<OpenJDKData>} Promise which resolved to an object containing the JRE download data.
      */
-    static _latestOpenJDK(major = '16'){
+    static _latestOpenJDK(major){
 
         if(process.platform === 'win32') {
             return this._latestJDKWin(major)
@@ -292,7 +292,7 @@ class JavaGuard extends EventEmitter {
     
     static _latestJDKlin(major) {
 
-        const url = `https://api.adoptopenjdk.net/v2/latestAssets/nightly/openjdk16?os=linux&arch=x64&heap_size=normal&openjdk_impl=hotspot&type=jre`
+        const url = `https://api.adoptopenjdk.net/v2/latestAssets/nightly/openjdk`+{major}+`?os=linux&arch=x64&heap_size=normal&openjdk_impl=hotspot&type=jre`
         
         return new Promise((resolve, reject) => {
             request({url, json: true}, (err, resp, body) => {
@@ -312,7 +312,7 @@ class JavaGuard extends EventEmitter {
 
     static _latestJDKMac(major) {
 
-        const url = `https://api.adoptopenjdk.net/v2/latestAssets/nightly/openjdk16?os=mac&arch=x64&heap_size=normal&openjdk_impl=hotspot&type=jre`
+        const url = `https://api.adoptopenjdk.net/v2/latestAssets/nightly/openjdk`+{major}+`?os=mac&arch=x64&heap_size=normal&openjdk_impl=hotspot&type=jre`
         
         return new Promise((resolve, reject) => {
             request({url, json: true}, (err, resp, body) => {
@@ -332,7 +332,7 @@ class JavaGuard extends EventEmitter {
 
     static _latestJDKWin(major) {
         
-        const url = `https://api.adoptopenjdk.net/v2/latestAssets/nightly/openjdk16?os=windows&arch=x64&heap_size=normal&openjdk_impl=hotspot&type=jre`
+        const url = `https://api.adoptopenjdk.net/v2/latestAssets/nightly/openjdk`+{major}+`?os=windows&arch=x64&heap_size=normal&openjdk_impl=hotspot&type=jre`
 
         return new Promise((resolve, reject) => {
             request({url, json: true}, (err, resp, body) => {
@@ -460,7 +460,7 @@ class JavaGuard extends EventEmitter {
 
     /**
      * Validates the output of a JVM's properties. Currently validates that a JRE is x64
-     * and that the major = 8, update > 52.
+     * and that the major >=16.
      * 
      * @param {string} stderr The output to validate.
      * 
@@ -492,9 +492,9 @@ class JavaGuard extends EventEmitter {
                 let verString = props[i].split('=')[1].trim()
                 console.log(props[i].trim())
                 const verOb = JavaGuard.parseJavaRuntimeVersion(verString)
-                if(verOb.major < 17){
-                    // Java 8
-                    if(verOb.major === 16){
+                if(verOb.major >= 16){
+                    // Java 16+
+                    if(verOb.major >= 16){
                         meta.version = verOb
                         ++checksum
                         if(checksum === goal){
@@ -502,9 +502,9 @@ class JavaGuard extends EventEmitter {
                         }
                     }
                 } else {
-                    // Java 16+
-                    if(Util.mcVersionAtLeast('1.13', this.mcVersion)){
-                        console.log('Java 17+ not tested.')
+                    // Java <16
+                    if(Util.mcVersionAtLeast('1.17', this.mcVersion)){
+                        console.log('Java <16 not supported on 1.17+.')
                         /* meta.version = verOb
                         ++checksum
                         if(checksum === goal){
@@ -545,7 +545,7 @@ class JavaGuard extends EventEmitter {
                 resolve({valid: false})
             } else if(fs.existsSync(binaryExecPath)){
                 // Workaround (javaw.exe no longer outputs this information.)
-                console.log(typeof binaryExecPath)
+                //console.log(typeof binaryExecPath)
                 if(binaryExecPath.indexOf('javaw.exe') > -1) {
                     binaryExecPath.replace('javaw.exe', 'java.exe')
                 }
@@ -640,8 +640,8 @@ class JavaGuard extends EventEmitter {
                                     for(let j=0; j<javaVers.length; j++){
                                         const javaVer = javaVers[j]
                                         const vKey = javaVer.key.substring(javaVer.key.lastIndexOf('\\')+1)
-                                        // Only Java 16 is supported currently.
-                                        if(parseFloat(vKey) === 1.16){
+                                        // Only Java 16+ is supported currently.
+                                        if(parseFloat(vKey) >= 1.16){
                                             javaVer.get('JavaHome', (err, res) => {
                                                 const jHome = res.value
                                                 if(jHome.indexOf('(x86)') === -1){
@@ -1536,7 +1536,6 @@ class AssetGuard extends EventEmitter {
                     if(Util.isForgeGradle3(server.getMinecraftVersion(), ob.getVersion())){
                         // Read Manifest
                         for(let sub of ob.getSubModules()){
-                            console.log(sub)
                             if(sub.getType() === DistroManager.Types.VersionManifest){
                                 resolve(JSON.parse(fs.readFileSync(sub.getArtifact().getPath(), 'utf-8')))
                                 return
@@ -1578,7 +1577,7 @@ class AssetGuard extends EventEmitter {
 
     _enqueueOpenJDK(dataDir){
         return new Promise((resolve, reject) => {
-            JavaGuard._latestOpenJDK('16').then(verData => {
+            JavaGuard._latestOpenJDK('17').then(verData => {
                 if(verData != null){
 
                     dataDir = path.join(dataDir, 'runtime', 'x64')
@@ -1642,113 +1641,6 @@ class AssetGuard extends EventEmitter {
 
     }
 
-    // _enqueueOracleJRE(dataDir){
-    //     return new Promise((resolve, reject) => {
-    //         JavaGuard._latestJREOracle().then(verData => {
-    //             if(verData != null){
-
-    //                 const combined = verData.uri + PLATFORM_MAP[process.platform]
-        
-    //                 const opts = {
-    //                     url: combined,
-    //                     headers: {
-    //                         'Cookie': 'oraclelicense=accept-securebackup-cookie'
-    //                     }
-    //                 }
-        
-    //                 request.head(opts, (err, resp, body) => {
-    //                     if(err){
-    //                         resolve(false)
-    //                     } else {
-    //                         dataDir = path.join(dataDir, 'runtime', 'x64')
-    //                         const name = combined.substring(combined.lastIndexOf('/')+1)
-    //                         const fDir = path.join(dataDir, name)
-    //                         const jre = new Asset(name, null, parseInt(resp.headers['content-length']), opts, fDir)
-    //                         this.java = new DLTracker([jre], jre.size, (a, self) => {
-    //                             let h = null
-    //                             fs.createReadStream(a.to)
-    //                                 .on('error', err => console.log(err))
-    //                                 .pipe(zlib.createGunzip())
-    //                                 .on('error', err => console.log(err))
-    //                                 .pipe(tar.extract(dataDir, {
-    //                                     map: (header) => {
-    //                                         if(h == null){
-    //                                             h = header.name
-    //                                         }
-    //                                     }
-    //                                 }))
-    //                                 .on('error', err => console.log(err))
-    //                                 .on('finish', () => {
-    //                                     fs.unlink(a.to, err => {
-    //                                         if(err){
-    //                                             console.log(err)
-    //                                         }
-    //                                         if(h.indexOf('/') > -1){
-    //                                             h = h.substring(0, h.indexOf('/'))
-    //                                         }
-    //                                         const pos = path.join(dataDir, h)
-    //                                         self.emit('complete', 'java', JavaGuard.javaExecFromRoot(pos))
-    //                                     })
-    //                                 })
-                                
-    //                         })
-    //                         resolve(true)
-    //                     }
-    //                 })
-
-    //             } else {
-    //                 resolve(false)
-    //             }
-    //         })
-    //     })
-
-    // }
-
-    // _enqueueMojangJRE(dir){
-    //     return new Promise((resolve, reject) => {
-    //         // Mojang does not host the JRE for linux.
-    //         if(process.platform === 'linux'){
-    //             resolve(false)
-    //         }
-    //         AssetGuard.loadMojangLauncherData().then(data => {
-    //             if(data != null) {
-
-    //                 try {
-    //                     const mJRE = data[Library.mojangFriendlyOS()]['64'].jre
-    //                     const url = mJRE.url
-
-    //                     request.head(url, (err, resp, body) => {
-    //                         if(err){
-    //                             resolve(false)
-    //                         } else {
-    //                             const name = url.substring(url.lastIndexOf('/')+1)
-    //                             const fDir = path.join(dir, name)
-    //                             const jre = new Asset('jre' + mJRE.version, mJRE.sha1, resp.headers['content-length'], url, fDir)
-    //                             this.java = new DLTracker([jre], jre.size, a => {
-    //                                 fs.readFile(a.to, (err, data) => {
-    //                                     // Data buffer needs to be decompressed from lzma,
-    //                                     // not really possible using node.js
-    //                                 })
-    //                             })
-    //                         }
-    //                     })
-    //                 } catch (err){
-    //                     resolve(false)
-    //                 }
-
-    //             }
-    //         })
-    //     })
-    // }
-
-
-    // #endregion
-
-    // #endregion
-
-    // Control Flow Functions
-    // #region
-
     /**
      * Initiate an async download process for an AssetGuard DLTracker.
      * 
@@ -1763,7 +1655,6 @@ class AssetGuard extends EventEmitter {
         const dlQueue = dlTracker.dlqueue
 
         if(dlQueue.length > 0){
-            console.log('DLQueue', dlQueue)
 
             async.eachLimit(dlQueue, limit, (asset, cb) => {
 
@@ -1811,7 +1702,7 @@ class AssetGuard extends EventEmitter {
                     } else {
 
                         req.abort()
-                        console.log(`Failed to download ${asset.id}(${typeof asset.from === 'object' ? asset.from.url : asset.from}). Response code ${resp.statusCode}`)
+                        console.error(`Failed to download ${asset.id}(${typeof asset.from === 'object' ? asset.from.url : asset.from}). Response code ${resp.statusCode}`)
                         self.progress += asset.size*1
                         self.emit('progress', 'download', self.progress, self.totaldlsize)
                         cb()
@@ -1927,7 +1818,7 @@ class AssetGuard extends EventEmitter {
             await this.validateMiscellaneous(versionData)
             this.emit('validate', 'files')
             await this.processDlQueues()
-            //this.emit('complete', 'download')
+            this.emit('complete', 'download')
             const forgeData = await this.loadForgeData(server)
         
             return {

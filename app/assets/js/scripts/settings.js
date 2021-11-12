@@ -1220,7 +1220,7 @@ function populateAboutVersionInformation(){
  */
 function populateReleaseNotes(){
     $.ajax({
-        url: 'https://github.com/Pwatoos66/FinaLauncher/releases.atom',
+        url: 'https://github.com/moehreag/AxolotlClient/releases.atom',
         success: (data) => {
             const version = 'v' + remote.app.getVersion()
             const entries = $(data).find('entry')

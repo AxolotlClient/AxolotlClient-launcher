@@ -45,7 +45,7 @@ const firstLaunch = !fs.existsSync(configPath) && !fs.existsSync(configPathLEGAC
 
 exports.getAbsoluteMinRAM = function(){
     const mem = os.totalmem()
-    return mem >= 6000000000 ? 3 : 2
+    return mem >= 4000000000 ? 2 : 1.5
 }
 
 exports.getAbsoluteMaxRAM = function(){
@@ -85,7 +85,7 @@ const DEFAULT_CONFIG = {
         game: {
             resWidth: 800,
             resHeight: 480,
-            fullscreen: true,
+            fullscreen: false,
             autoConnect: false,
             launchDetached: true
         },
@@ -93,11 +93,6 @@ const DEFAULT_CONFIG = {
             allowPrerelease: false,
             dataDirectory: dataPath
         }
-    },
-    newsCache: {
-        date: null,
-        content: null,
-        dismissed: false
     },
     clientToken: null,
     selectedServer: null, // Resolved
