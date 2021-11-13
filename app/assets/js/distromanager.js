@@ -133,7 +133,7 @@ class Module {
             case exports.Types.Library:
             case exports.Types.ForgeHosted:
             case exports.Types.LiteLoader:
-            case exports.Types.ForgeMod:
+            case exports.Types.Mod:
                 return 'jar'
             case exports.Types.LiteMod:
                 return 'litemod'
@@ -183,7 +183,7 @@ class Module {
             case exports.Types.LiteLoader:
                 this.artifact.path = path.join(ConfigManager.getCommonDirectory(), 'libraries', pth)
                 break
-            case exports.Types.ForgeMod:
+            case exports.Types.Mod:
             case exports.Types.LiteMod:
                 this.artifact.path = path.join(ConfigManager.getCommonDirectory(), 'modstore', pth)
                 break
@@ -516,13 +516,13 @@ exports.Types = {
     ForgeHosted: 'ForgeHosted',
     Forge: 'Forge', // Unimplemented
     LiteLoader: 'LiteLoader',
-    ForgeMod: 'ForgeMod',
+    Mod: 'Mod',
     LiteMod: 'LiteMod',
     File: 'File',
     VersionManifest: 'VersionManifest'
 }
 
-let DEV_MODE = false
+let DEV_MODE = true
 
 const DISTRO_PATH = path.join(ConfigManager.getLauncherDirectory(), 'distribution.json')
 const DEV_PATH = path.join(ConfigManager.getLauncherDirectory(), 'dev_distribution.json')
