@@ -522,7 +522,7 @@ exports.Types = {
     VersionManifest: 'VersionManifest'
 }
 
-let DEV_MODE = true
+let DEV_MODE = false
 
 const DISTRO_PATH = path.join(ConfigManager.getLauncherDirectory(), 'distribution.json')
 const DEV_PATH = path.join(ConfigManager.getLauncherDirectory(), 'dev_distribution.json')
