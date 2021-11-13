@@ -168,8 +168,6 @@ class ProcessBuilder {
         // JVM Arguments First
         let args = this.versionData.arguments.jvm
 
-        logger.warn(this.modDir)
-
         args.push('-Dfabric.addMods='+this.modDir)
 
         // Java Arguments
