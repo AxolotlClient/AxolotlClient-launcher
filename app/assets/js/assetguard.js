@@ -21,6 +21,7 @@ const isDev         = require('./isdev')
 //     darwin: '-macosx-x64.tar.gz',
 //     linux: '-linux-x64.tar.gz'
 // }
+const javaVer = '17'
 
 // Classes
 
@@ -222,42 +223,6 @@ class JavaGuard extends EventEmitter {
         this.mcVersion = mcVersion
     }
 
-    // /**
-    //  * @typedef OracleJREData
-    //  * @property {string} uri The base uri of the JRE.
-    //  * @property {{major: string, update: string, build: string}} version Object containing version information.
-    //  */
-
-    // /**
-    //  * Resolves the latest version of Oracle's JRE and parses its download link.
-    //  * 
-    //  * @returns {Promise.<OracleJREData>} Promise which resolved to an object containing the JRE download data.
-    //  */
-    // static _latestJREOracle(){
-
-    //     const url = 'https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html'
-    //     const regex = /https:\/\/.+?(?=\/java)\/java\/jdk\/([0-9]+u[0-9]+)-(b[0-9]+)\/([a-f0-9]{32})?\/jre-\1/
-    
-    //     return new Promise((resolve, reject) => {
-    //         request(url, (err, resp, body) => {
-    //             if(!err){
-    //                 const arr = body.match(regex)
-    //                 const verSplit = arr[1].split('u')
-    //                 resolve({
-    //                     uri: arr[0],
-    //                     version: {
-    //                         major: verSplit[0],
-    //                         update: verSplit[1],
-    //                         build: arr[2]
-    //                     }
-    //                 })
-    //             } else {
-    //                 resolve(null)
-    //             }
-    //         })
-    //     })
-    // }
-
     /**
      * @typedef OpenJDKData
      * @property {string} uri The base uri of the JRE.
@@ -278,62 +243,23 @@ class JavaGuard extends EventEmitter {
      */
     static _latestOpenJDK(major){
 
+        let cleanPlatform
         if(process.platform === 'win32') {
-            return this._latestJDKWin(major)
+            cleanPlatform = "windows"
         } else {
             if(process.platform === 'darwin') {
-                return this._latestJDKMac(major)
+                cleanPlatform = "mac"
             }
             else {
-                return this._latestJDKlin(major)
+                cleanPlatform = "linux"
             }
         }
     }
     
-    static _latestJDKlin(major) {
+    static _latestJDK(major) {
 
-        const url = `https://api.adoptopenjdk.net/v2/latestAssets/nightly/openjdk`+{major}+`?os=linux&arch=x64&heap_size=normal&openjdk_impl=hotspot&type=jre`
+        const url = `https://api.adoptium.net/v3/assets/feature_releases/`+{major}+`/ga?architecture=x64&heap_size=normal&image_type=jre&jvm_impl=hotspot&os=`+{cleanPlatform}+`&page=0&page_size=10&project=jdk&sort_method=DEFAULT&sort_order=DESC&vendor=eclipse`
         
-        return new Promise((resolve, reject) => {
-            request({url, json: true}, (err, resp, body) => {
-                if(!err && body.length > 0){
-                    resolve({
-                        uri: body[0].binary_link,
-                        size: body[0].binary_size,
-                        name: body[0].binary_name
-                    })
-                } else {
-                    resolve(null)
-                }
-            })
-        })
-
-    }
-
-    static _latestJDKMac(major) {
-
-        const url = `https://api.adoptopenjdk.net/v2/latestAssets/nightly/openjdk`+{major}+`?os=mac&arch=x64&heap_size=normal&openjdk_impl=hotspot&type=jre`
-        
-        return new Promise((resolve, reject) => {
-            request({url, json: true}, (err, resp, body) => {
-                if(!err && body.length > 0){
-                    resolve({
-                        uri: body[0].binary_link,
-                        size: body[0].binary_size,
-                        name: body[0].binary_name
-                    })
-                } else {
-                    resolve(null)
-                }
-            })
-        })
-
-    }
-
-    static _latestJDKWin(major) {
-        
-        const url = `https://api.adoptopenjdk.net/v2/latestAssets/nightly/openjdk`+{major}+`?os=windows&arch=x64&heap_size=normal&openjdk_impl=hotspot&type=jre`
-
         return new Promise((resolve, reject) => {
             request({url, json: true}, (err, resp, body) => {
                 if(!err && body.length > 0){
@@ -492,9 +418,9 @@ class JavaGuard extends EventEmitter {
                 let verString = props[i].split('=')[1].trim()
                 console.log(props[i].trim())
                 const verOb = JavaGuard.parseJavaRuntimeVersion(verString)
-                if(verOb.major >= 16){
-                    // Java 16+
-                    if(verOb.major >= 16){
+                if(verOb.major >= 17){
+                    // Java 17+
+                    if(verOb.major >= 17){
                         meta.version = verOb
                         ++checksum
                         if(checksum === goal){
@@ -503,8 +429,8 @@ class JavaGuard extends EventEmitter {
                     }
                 } else {
                     // Java <16
-                    if(Util.mcVersionAtLeast('1.17', this.mcVersion)){
-                        console.log('Java <16 not supported on 1.17+.')
+                    if(Util.mcVersionAtLeast('1.18', this.mcVersion)){
+                        console.log('Java <17 not supported on 1.18+.')
                         /* meta.version = verOb
                         ++checksum
                         if(checksum === goal){
@@ -640,7 +566,7 @@ class JavaGuard extends EventEmitter {
                                     for(let j=0; j<javaVers.length; j++){
                                         const javaVer = javaVers[j]
                                         const vKey = javaVer.key.substring(javaVer.key.lastIndexOf('\\')+1)
-                                        // Only Java 16+ is supported currently.
+                                        // Only Java 17+ is supported currently.
                                         if(parseFloat(vKey) >= 1.16){
                                             javaVer.get('JavaHome', (err, res) => {
                                                 const jHome = res.value
@@ -1577,7 +1503,7 @@ class AssetGuard extends EventEmitter {
 
     _enqueueOpenJDK(dataDir){
         return new Promise((resolve, reject) => {
-            JavaGuard._latestOpenJDK('17').then(verData => {
+            JavaGuard._latestOpenJDK(javaVersion).then(verData => {
                 if(verData != null){
 
                     dataDir = path.join(dataDir, 'runtime', 'x64')
