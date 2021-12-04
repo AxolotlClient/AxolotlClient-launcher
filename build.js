@@ -21,7 +21,7 @@ builder.build({
         appId: 'AxolotlClient',
         productName: 'AxolotlClient',
         artifactName: '${productName}-${version}.${ext}',
-        copyright: 'Copyright © MoehreAG, Finalium Network, Daniel Scalzi',
+        copyright: 'Copyright © MoehreAG, Daniel Scalzi',
         directories: {
             buildResources: 'build',
             output: 'dist'
