@@ -30,18 +30,6 @@ jobs:
         uses: samuelmeuli/action-electron-builder@v1
         with:
           github_token: ${{ secrets.github_token }}
-
-      - name: Automatic Pre-release
-        uses: marvinpinto/action-automatic-releases@v1.2.1
-        with:
-          repo_token: "${{ secrets.GITHUB_TOKEN }}"
-          automatic_release_tag: "latest"
-          prerelease: true
-          title: Dev build
-          files: |
-            dist/Axolotlclient-*
-            dist/latest-*
-
     
       - uses: actions/upload-artifact@v2
         with:
