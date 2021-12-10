@@ -25,7 +25,7 @@ If applicable, add screenshots to help explain your problem.
 
 **Envroiment (please complete the following information):**
  - OS: [e.g. Windows]
- - Version [e.g. 22]
+ - Version [e.g. 11]
 
 **Additional context**
 Add any other context about the problem here.
