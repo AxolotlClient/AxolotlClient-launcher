@@ -16,7 +16,7 @@ const logger = LoggerUtil('%c[ProcessBuilder]', 'color: #003996; font-weight: bo
 class ProcessBuilder {
 
     constructor(distroServer, versionData, forgeData, authUser, launcherVersion){
-        this.gameDir = path.join(ConfigManager.getInstanceDirectory(), distroServer.getID())
+        this.gameDir = path.join(ConfigManager.getInstanceDirectory())
         this.commonDir = ConfigManager.getCommonDirectory()
         this.modDir = path.join(this.commonDir, 'modstore/', distroServer.getID())
         this.server = distroServer
