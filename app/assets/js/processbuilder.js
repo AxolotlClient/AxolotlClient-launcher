@@ -6,7 +6,7 @@ const os                    = require('os')
 const path                  = require('path')
 const { URL }               = require('url')
 
-const { Util, Library }  = require('./assetguard')
+const { Util, Library }        = require('./assetguard')
 const ConfigManager            = require('./configmanager')
 const DistroManager            = require('./distromanager')
 const LoggerUtil               = require('./loggerutil')
@@ -36,10 +36,8 @@ class ProcessBuilder {
         fs.ensureDirSync(this.gameDir)
         const tempNativePath = path.join(os.tmpdir(), ConfigManager.getTempNativeFolder(), crypto.pseudoRandomBytes(16).toString('hex'))
         process.throwDeprecation = true
-        const modObj = this.resolveModConfiguration(ConfigManager.getModConfiguration(this.server.getID()).mods, this.server.getModules())
 
-        const uberModArr = modObj.fMods.concat(modObj.lMods)
-        let args = this.constructJVMArguments(uberModArr, tempNativePath)
+        let args = this.constructJVMArguments(tempNativePath, this.server.getModules())
 
 
         const child = child_process.spawn(ConfigManager.getJavaExecutable(), args, {
@@ -86,60 +84,52 @@ class ProcessBuilder {
     }
 
     /**
-     * Determine if an optional mod is enabled from its configuration value. If the
-     * configuration value is null, the required object will be used to
-     * determine if it is enabled.
+     * resolves a full mod path from just the name
      *
-     * A mod is enabled if:
-     *   * The configuration is not null and one of the following:
-     *     * The configuration is a boolean and true.
-     *     * The configuration is an object and its 'value' property is true.
-     *   * The configuration is null and one of the following:
-     *     * The required object is null.
-     *     * The required object's 'def' property is null or true.
-     *
-     * @param {Object | boolean} modCfg The mod configuration object.
-     * @param {Object} required Optional. The required object from the mod's distro declaration.
-     * @returns {boolean} True if the mod is enabled, false otherwise.
+     * @returns {String} pth The path of the optional mod
      */
-    static isModEnabled(modCfg, required = null){
-        return modCfg != null ? ((typeof modCfg === 'boolean' && modCfg) || (typeof modCfg === 'object' && (typeof modCfg.value !== 'undefined' ? modCfg.value : true))) : required != null ? required.isDefault() : true
-    }
-
-
-    /**
-     * Resolve an array of all enabled mods. These mods will be constructed into
-     * a mod list format and enabled at launch.
-     *
-     * @param {Object} modCfg The mod configuration object.
-     * @param {Array.<Object>} mdls An array of modules to parse.
-     * @returns {{fMods: Array.<Object>, lMods: Array.<Object>}} An object which contains
-     * a list of enabled forge mods and litemods.
-     */
-    resolveModConfiguration(modCfg, mdls){
-        let fMods = []
-
-        for(let mdl of mdls){
-            const type = mdl.getType()
-            if(type === DistroManager.Types.Mod){
-                const o = !mdl.getRequired().isRequired()
-                const e = ProcessBuilder.isModEnabled(modCfg[mdl.getVersionlessID()], mdl.getRequired())
-                if(!o || (o && e)){
-                    if(mdl.hasSubModules()){
-                        const v = this.resolveModConfiguration(modCfg[mdl.getVersionlessID()].mods, mdl.getSubModules())
-                        fMods = fMods.concat(v.fMods)
-                    }
-                    if(mdl.type === DistroManager.Types.ForgeMod){
-                        fMods.push(mdl)
-                    }
-                }
+    resolveMod(name){
+        let pth = ''
+        for (let mdl of this.server.getModules()){
+            if (mdl.getName() == name){
+                pth = mdl.getArtifact().getPath()
             }
         }
 
-        return {
-            fMods
-        }
+
+        return pth
     }
+
+    /**
+     * constructs the Mod argument list
+     *
+     */
+    constructModArguments(){
+        //Construct Mods
+        let modArg = ""
+        let i = 0
+        const sep = process.platform === 'win32' ? ';' : ':'
+        const id = this.server.getID()
+
+        for (let m of Object.values(ConfigManager.getModConfiguration(this.server.getID()).mods.optional)){
+
+            const pth = this.resolveMod(m)
+            if (i >= 1){
+                modArg += sep
+            }
+
+            modArg += pth
+
+            i += 1
+        }
+        if (i > 0){
+            modArg += sep
+        }
+        modArg += path.join(this.commonDir, 'modstore', id, 'required/')
+
+        return modArg
+    }
+
 
     /**
      * Construct the argument array that will be passed to the JVM process.
@@ -148,9 +138,9 @@ class ProcessBuilder {
      * @param {string} tempNativePath The path to store the native libraries.
      * @returns {Array.<string>} An array containing the full JVM arguments for this process.
      */
-    constructJVMArguments(mods, tempNativePath){
+    constructJVMArguments(tempNativePath, mods){
         if(Util.mcVersionAtLeast('1.13', this.server.getMinecraftVersion())){
-            return this._constructJVMArguments113(mods, tempNativePath)
+            return this._constructJVMArguments113(tempNativePath, mods)
         }
     }
 
@@ -161,14 +151,17 @@ class ProcessBuilder {
      * @param {string} tempNativePath The path to store the native libraries.
      * @returns {Array.<string>} An array containing the full JVM arguments for this process.
      */
-    _constructJVMArguments113(mods, tempNativePath){
+    _constructJVMArguments113(tempNativePath, mods){
 
         const argDiscovery = /\${*(.*)}/
 
         // JVM Arguments First
         let args = this.versionData.arguments.jvm
 
-        args.push('-Dfabric.addMods='+this.modDir)
+        //Construct Mods
+        const modArg = this.constructModArguments()
+
+        args.push('-Dfabric.addMods='+modArg)
 
         // Java Arguments
         if(process.platform === 'darwin'){
@@ -259,7 +252,7 @@ class ProcessBuilder {
                             val = this.authUser.accessToken
                             break
                         case 'user_type':
-                            val = 'microsoft'
+                            val = 'mojang'
                             break
                         case 'version_type':
                             val = 'AxolotlClient'
@@ -280,7 +273,7 @@ class ProcessBuilder {
                             val = args[i].replace(argDiscovery, this.launcherVersion)
                             break
                         case 'classpath':
-                            val = this.classpathArg(mods, tempNativePath).join(process.platform === 'win32' ? ';' : ':')
+                            val = this.classpathArg(mods, tempNativePath)//.process.platform === 'win32' ? ';' : ':')
                             break
                     }
                     if(val != null){
@@ -318,19 +311,21 @@ class ProcessBuilder {
 
     /**
      * Resolve the full classpath argument list for this process. This method will resolve all Mojang-declared
-     * libraries as well as the libraries declared by the server. Since mods are permitted to declare libraries,
-     * this method requires all enabled mods as an input
+     * libraries as well as the libraries declared by the server.
      * 
-     * @param {Array.<Object>} mods An array of enabled mods which will be launched with this process.
      * @param {string} tempNativePath The path to store the native libraries.
      * @returns {Array.<string>} An array containing the paths of each library required by this process.
      */
     classpathArg(mods, tempNativePath){
         let cpArgs = []
+        let Libs = ""
+        let i = 0
+        const sep = process.platform === 'win32' ? ';' : ':'
 
         // Add the version.jar to the classpath.
         const version = this.versionData.id
-        cpArgs.push(path.join(this.commonDir, 'versions', version, version + '.jar'))
+        Libs += path.join(this.commonDir, 'versions', version, version + '.jar')
+        Libs += sep
 
         // Resolve the Mojang declared libraries.
         const mojangLibs = this._resolveMojangLibraries(tempNativePath)
@@ -342,11 +337,87 @@ class ProcessBuilder {
         // maven identifier will override the mojang ones.
         // Ex. 1.7.10 forge overrides mojang's guava with newer version.
         const finalLibs = {...mojangLibs, ...servLibs}
-        cpArgs = cpArgs.concat(Object.values(finalLibs))
+        for (let lib of Object.values(finalLibs)){
 
-        this._processClassPathList(cpArgs)
+            if (i >= 1){
+                Libs += sep
+            }
 
-        return cpArgs
+            Libs += lib
+
+            i += 1
+        }
+        cpArgs = cpArgs.concat(Libs)
+
+        //this._processClassPathList(cpArgs)
+
+        return Libs
+    }
+
+    /**
+     * Resolve the libraries declared by this server in order to add them to the classpath.
+     * This method will also check each enabled mod for libraries, as mods are permitted to
+     * declare libraries.
+     *
+     * @param {Array.<Object>} mods An array of enabled mods which will be launched with this process.
+     * @returns {{[id: string]: string}} An object containing the paths of each library this server requires.
+     */
+    _resolveServerLibraries(mods){
+        const mdls = this.server.getModules()
+        let libs = {}
+
+        // Locate Forge/Libraries
+        for(let mdl of mdls){
+            const type = mdl.getType()
+            if(type === DistroManager.Types.Loader || type === DistroManager.Types.Library){
+                libs[mdl.getVersionlessID()] = mdl.getArtifact().getPath()
+                if(mdl.hasSubModules()){
+                    const res = this._resolveModuleLibraries(mdl)
+                    if(res.length > 0){
+                        libs = {...libs, ...res}
+                    }
+                }
+            }
+        }
+
+        //Check for any libraries in our mod list.
+        for(let i=0; i<mods.length; i++){
+            if(mods.sub_modules != null){
+                const res = this._resolveModuleLibraries(mods[i])
+                if(res.length > 0){
+                    libs = {...libs, ...res}
+                }
+            }
+        }
+
+        return libs
+    }
+
+    /**
+     * Recursively resolve the path of each library required by this module.
+     *
+     * @param {Object} mdl A module object from the server distro index.
+     * @returns {Array.<string>} An array containing the paths of each library this module requires.
+     */
+    _resolveModuleLibraries(mdl){
+        if(!mdl.hasSubModules()){
+            return []
+        }
+        let libs = []
+        for(let sm of mdl.getSubModules()){
+            if(sm.getType() === DistroManager.Types.Library){
+                libs.push(sm.getArtifact().getPath())
+            }
+            // If this module has submodules, we need to resolve the libraries for those.
+            // To avoid unnecessary recursive calls, base case is checked here.
+            if(mdl.hasSubModules()){
+                const res = this._resolveModuleLibraries(sm)
+                if(res.length > 0){
+                    libs = libs.concat(res)
+                }
+            }
+        }
+        return libs
     }
 
     /**
@@ -412,73 +483,7 @@ class ProcessBuilder {
 
         return libs
     }
-
-    /**
-     * Resolve the libraries declared by this server in order to add them to the classpath.
-     * This method will also check each enabled mod for libraries, as mods are permitted to
-     * declare libraries.
-     * 
-     * @param {Array.<Object>} mods An array of enabled mods which will be launched with this process.
-     * @returns {{[id: string]: string}} An object containing the paths of each library this server requires.
-     */
-    _resolveServerLibraries(mods){
-        const mdls = this.server.getModules()
-        let libs = {}
-
-        // Locate Forge/Libraries
-        for(let mdl of mdls){
-            const type = mdl.getType()
-            if(type === DistroManager.Types.ForgeHosted || type === DistroManager.Types.Library){
-                libs[mdl.getVersionlessID()] = mdl.getArtifact().getPath()
-                if(mdl.hasSubModules()){
-                    const res = this._resolveModuleLibraries(mdl)
-                    if(res.length > 0){
-                        libs = {...libs, ...res}
-                    }
-                }
-            }
-        }
-
-        //Check for any libraries in our mod list.
-        for(let i=0; i<mods.length; i++){
-            if(mods.sub_modules != null){
-                const res = this._resolveModuleLibraries(mods[i])
-                if(res.length > 0){
-                    libs = {...libs, ...res}
-                }
-            }
-        }
-
-        return libs
-    }
-
-    /**
-     * Recursively resolve the path of each library required by this module.
-     * 
-     * @param {Object} mdl A module object from the server distro index.
-     * @returns {Array.<string>} An array containing the paths of each library this module requires.
-     */
-    _resolveModuleLibraries(mdl){
-        if(!mdl.hasSubModules()){
-            return []
-        }
-        let libs = []
-        for(let sm of mdl.getSubModules()){
-            if(sm.getType() === DistroManager.Types.Library){
-                libs.push(sm.getArtifact().getPath())
-            }
-            // If this module has submodules, we need to resolve the libraries for those.
-            // To avoid unnecessary recursive calls, base case is checked here.
-            if(mdl.hasSubModules()){
-                const res = this._resolveModuleLibraries(sm)
-                if(res.length > 0){
-                    libs = libs.concat(res)
-                }
-            }
-        }
-        return libs
-    }
-
 }
+
 
 module.exports = ProcessBuilder

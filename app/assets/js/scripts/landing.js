@@ -102,7 +102,6 @@ document.getElementById('launch_button').addEventListener('click', function(e){
 
         const jg = new JavaGuard(mcVersion)
         jg._validateJavaBinary(jExe).then((v) => {
-            loggerLanding.log('Java version meta', v)
             if(v.valid){
                 dlAsync()
             } else {
