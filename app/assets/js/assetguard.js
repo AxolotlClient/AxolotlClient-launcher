@@ -258,16 +258,30 @@ class JavaGuard extends EventEmitter {
     
     static _latestJDK(major) {
 
-        const url = `https://api.adoptium.net/v3/assets/feature_releases/`+{major}+`/ga?architecture=x64&heap_size=normal&image_type=jre&jvm_impl=hotspot&os=`+{cleanPlatform}+`&page=0&page_size=10&project=jdk&sort_method=DEFAULT&sort_order=DESC&vendor=eclipse`
-        
+        const majorNum = Number(major)
+        const sanitizedOS = process.platform === 'win32' ? 'windows' : (process.platform === 'darwin' ? 'mac' : process.platform)
+        const url = `https://api.adoptium.net/v3/assets/latest/${major}/hotspot?vendor=eclipse`
+
         return new Promise((resolve, reject) => {
             request({url, json: true}, (err, resp, body) => {
                 if(!err && body.length > 0){
-                    resolve({
-                        uri: body[0].binary_link,
-                        size: body[0].binary_size,
-                        name: body[0].binary_name
+
+                    const targetBinary = body.find(entry => {
+                        return entry.version.major === majorNum
+                            && entry.binary.os === sanitizedOS
+                            && entry.binary.image_type === 'jdk'
+                            && entry.binary.architecture === 'x64'
                     })
+
+                    if(targetBinary != null) {
+                        resolve({
+                            uri: targetBinary.binary.package.link,
+                            size: targetBinary.binary.package.size,
+                            name: targetBinary.binary.package.name
+                        })
+                    } else {
+                        resolve(null)
+                    }
                 } else {
                     resolve(null)
                 }
@@ -864,7 +878,7 @@ class JavaGuard extends EventEmitter {
         if(jHome != null){
             uberSet.add(jHome)
         }
-        
+
         let pathArr = await this._validateJavaRootSet(uberSet)
         pathArr = JavaGuard._sortValidJavaArray(pathArr)
 
