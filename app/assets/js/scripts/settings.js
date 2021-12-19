@@ -525,18 +525,23 @@ function resolveModsForUI(){
  * @param {boolean} submodules Whether or not we are parsing submodules.
  * @param {Object} servConf The server configuration object for this module level.
  */
+let enabledOptMods = []
+
 function parseModulesForUI(mdls, submodules, servConf){
 
     let reqMods = ''
     let optMods = ''
 
+    enabledOptMods = ConfigManager.getModConfiguration(ConfigManager.getSelectedServer()).mods.optional != null ? ConfigManager.getModConfiguration(ConfigManager.getSelectedServer()).mods.optional : []
+
     for(const mdl of mdls){
 
-        if(mdl.getType() === DistroManager.Types.ForgeMod || mdl.getType() === DistroManager.Types.LiteMod || mdl.getType() === DistroManager.Types.LiteLoader){
+        if(mdl.getType() === DistroManager.Types.Mod){
 
+            const mod = mdl.getName()
             if(mdl.getRequired().isRequired()){
 
-                reqMods += `<div id="${mdl.getVersionlessID()}" class="settingsBaseMod settings${submodules ? 'Sub' : ''}Mod" enabled>
+                reqMods += `<div id="${mdl.getName()}" class="settingsBaseMod settings${submodules ? 'Sub' : ''}Mod" enabled>
                     <div class="settingsModContent">
                         <div class="settingsModMainWrapper">
                             <div class="settingsModStatus"></div>
@@ -550,17 +555,25 @@ function parseModulesForUI(mdls, submodules, servConf){
                             <span class="toggleSwitchSlider"></span>
                         </label>
                     </div>
-                    ${mdl.hasSubModules() ? `<div class="settingsSubModContainer">
-                        ${Object.values(parseModulesForUI(mdl.getSubModules(), true, servConf[mdl.getVersionlessID()])).join('')}
-                    </div>` : ''}
                 </div>`
+
 
             } else {
 
-                const conf = servConf[mdl.getVersionlessID()]
-                const val = typeof conf === 'object' ? conf.value : conf
+                conf = ConfigManager.getModConfiguration(ConfigManager.getSelectedServer()).mods.optional != undefined ?  (ConfigManager.getModConfiguration(ConfigManager.getSelectedServer()).mods.optional.indexOf(mod) >= 0 ? true : false): ''
 
-                optMods += `<div id="${mdl.getVersionlessID()}" class="settingsBaseMod settings${submodules ? 'Sub' : ''}Mod" ${val ? 'enabled' : ''}>
+                let val = !ConfigManager.isFirstLaunch() ? (typeof conf  == 'boolean' ? conf : mdl.getRequired().isDefault()) : mdl.getRequired().isDefault()
+
+                if (enabledOptMods.indexOf(mod) >= 0){
+                    val = true
+                }
+                if (val){
+                    if (enabledOptMods.indexOf(mod) == -1){
+                        enabledOptMods.push(mod)
+                    }
+                }
+
+                optMods += `<div id="${mdl.getName()}" class="settingsBaseMod settings${submodules ? 'Sub' : ''}Mod" ${val ? 'enabled' : ''}>
                     <div class="settingsModContent">
                         <div class="settingsModMainWrapper">
                             <div class="settingsModStatus"></div>
@@ -570,13 +583,10 @@ function parseModulesForUI(mdls, submodules, servConf){
                             </div>
                         </div>
                         <label class="toggleSwitch">
-                            <input type="checkbox" formod="${mdl.getVersionlessID()}" ${val ? 'checked' : ''}>
-                            <span class="toggleSwitchSlider"></span>
+                            <input type="checkbox" formod="${mdl.getName()}" ${val ? 'checked' : ''}>
+                            <span class="toggleSwitchSlider" onclick=ToggleOptModConf("${mod}")></span>
                         </label>
                     </div>
-                    ${mdl.hasSubModules() ? `<div class="settingsSubModContainer">
-                        ${Object.values(parseModulesForUI(mdl.getSubModules(), true, conf.mods)).join('')}
-                    </div>` : ''}
                 </div>`
 
             }
@@ -591,15 +601,32 @@ function parseModulesForUI(mdls, submodules, servConf){
 }
 
 /**
+ *
+ */
+
+function ToggleOptModConf(mod){
+
+    if (enabledOptMods.indexOf(mod) >= 0){
+        enabledOptMods = enabledOptMods.filter(enabledOptMods => enabledOptMods !== mod)
+    } else {
+        enabledOptMods.push(mod)
+    }
+}
+
+
+/**
  * Bind functionality to mod config toggle switches. Switching the value
  * will also switch the status color on the left of the mod UI.
  */
 function bindModsToggleSwitch(){
     const sEls = settingsModsContainer.querySelectorAll('[formod]')
+    const commonsDir = ConfigManager.getCommonDirectory()
+    const modsDir = path.join(commonsDir,'modstore',ConfigManager.getSelectedServer())
     Array.from(sEls).map((v, index, arr) => {
         v.onchange = () => {
             if(v.checked) {
                 document.getElementById(v.getAttribute('formod')).setAttribute('enabled', '')
+
             } else {
                 document.getElementById(v.getAttribute('formod')).removeAttribute('enabled')
             }
@@ -614,32 +641,12 @@ function bindModsToggleSwitch(){
 function saveModConfiguration(){
     const serv = ConfigManager.getSelectedServer()
     const modConf = ConfigManager.getModConfiguration(serv)
-    modConf.mods = _saveModConfiguration(modConf.mods)
+    modConf.mods.optional = _saveModConfigurationOpt()
     ConfigManager.setModConfiguration(serv, modConf)
 }
 
-/**
- * Recursively save mod config with submods.
- * 
- * @param {Object} modConf Mod config object to save.
- */
-function _saveModConfiguration(modConf){
-    for(let m of Object.entries(modConf)){
-        const tSwitch = settingsModsContainer.querySelectorAll(`[formod='${m[0]}']`)
-        if(!tSwitch[0].hasAttribute('dropin')){
-            if(typeof m[1] === 'boolean'){
-                modConf[m[0]] = tSwitch[0].checked
-            } else {
-                if(m[1] != null){
-                    if(tSwitch.length > 0){
-                        modConf[m[0]].value = tSwitch[0].checked
-                    }
-                    modConf[m[0]].mods = _saveModConfiguration(modConf[m[0]].mods)
-                }
-            }
-        }
-    }
-    return modConf
+function _saveModConfigurationOpt(){
+    return enabledOptMods
 }
 
 // Drop-in mod elements.

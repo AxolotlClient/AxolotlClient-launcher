@@ -131,12 +131,9 @@ class Module {
     static _resolveDefaultExtension(type){
         switch (type) {
             case exports.Types.Library:
-            case exports.Types.ForgeHosted:
-            case exports.Types.LiteLoader:
+            case exports.Types.Loader:
             case exports.Types.Mod:
                 return 'jar'
-            case exports.Types.LiteMod:
-                return 'litemod'
             case exports.Types.File:
             default:
                 return 'jar' // There is no default extension really.
@@ -179,12 +176,10 @@ class Module {
 
         switch (this.type){
             case exports.Types.Library:
-            case exports.Types.ForgeHosted:
-            case exports.Types.LiteLoader:
+            case exports.Types.Loader:
                 this.artifact.path = path.join(ConfigManager.getCommonDirectory(), 'libraries', pth)
                 break
             case exports.Types.Mod:
-            case exports.Types.LiteMod:
                 this.artifact.path = path.join(ConfigManager.getCommonDirectory(), 'modstore', pth)
                 break
             case exports.Types.VersionManifest:
@@ -513,11 +508,8 @@ exports.DistroIndex
 
 exports.Types = {
     Library: 'Library',
-    ForgeHosted: 'ForgeHosted',
-    Forge: 'Forge', // Unimplemented
-    LiteLoader: 'LiteLoader',
+    Loader: 'Loader',
     Mod: 'Mod',
-    LiteMod: 'LiteMod',
     File: 'File',
     VersionManifest: 'VersionManifest'
 }
