@@ -187,7 +187,7 @@ class Module {
                 break
             case exports.Types.File:
             default:
-                this.artifact.path = path.join(ConfigManager.getInstanceDirectory(), pth)
+                this.artifact.path = path.join(ConfigManager.getInstanceDirectory(), serverid, pth)
                 break
         }
 

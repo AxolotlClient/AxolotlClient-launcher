@@ -224,7 +224,7 @@ exports.getCommonDirectory = function(){
  * @returns {string} The launcher's instance directory.
  */
 exports.getInstanceDirectory = function(){
-    return path.join(exports.getDataDirectory(), 'minecraft')
+    return path.join(exports.getDataDirectory(), 'instances')
 }
 
 /**

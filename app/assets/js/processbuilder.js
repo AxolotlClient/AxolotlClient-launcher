@@ -16,9 +16,10 @@ const logger = LoggerUtil('%c[ProcessBuilder]', 'color: #003996; font-weight: bo
 class ProcessBuilder {
 
     constructor(distroServer, versionData, forgeData, authUser, launcherVersion){
-        this.gameDir = path.join(ConfigManager.getInstanceDirectory())
+        this.gameDir = path.join(ConfigManager.getInstanceDirectory(), ConfigManager.getSelectedServer())
         this.commonDir = ConfigManager.getCommonDirectory()
         this.modDir = path.join(this.commonDir, 'modstore', distroServer.getID())
+        this.mcDir = path.join(ConfigManager.getDataDirectory(), 'minecraft')
         this.server = distroServer
         this.versionData = versionData
         this.forgeData = forgeData
@@ -34,6 +35,10 @@ class ProcessBuilder {
      */
     build(){
         fs.ensureDirSync(this.gameDir)
+        fs.ensureDirSync(this.mcDir)
+
+        this.createSymlinks()
+
         const tempNativePath = path.join(os.tmpdir(), ConfigManager.getTempNativeFolder(), crypto.pseudoRandomBytes(16).toString('hex'))
         process.throwDeprecation = true
 
@@ -81,6 +86,39 @@ class ProcessBuilder {
         })
 
         return child
+    }
+
+    /**
+     * creates symlinks for often-used folders for all Instances
+     */
+    createSymlinks(){
+        this._createSymLinks('resourcepacks', 'dir')
+        this._createSymLinks('config', 'dir')
+        this._createSymLinks('saves', 'dir')
+        this._createSymLinks('servers.dat')
+        this._createSymLinks('shaderpacks', 'dir')
+    }
+
+    /**
+     * creates the symlinks
+     */
+    _createSymLinks(folder, type = 'file'){
+        if (fs.existsSync(path.join(this.gameDir, folder))) {
+            logger.log('Won\'t create', folder,  'symlink because the folder/symlink already exists!')
+        } else {
+
+            if (type == 'dir'){
+                fs.ensureDirSync(path.join(this.mcDir, folder))
+            }
+
+            fs.symlink(path.join(this.mcDir, folder), path.join(this.gameDir, folder), type, (err) => {
+                if (err){
+                    logger.warn('Failed to create', folder, 'symlink!')
+                } else {
+                    logger.log('Successfully created symlink for the', folder, 'folder!')
+                }
+            })
+        }
     }
 
     /**

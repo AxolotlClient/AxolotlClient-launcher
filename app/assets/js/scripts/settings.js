@@ -660,7 +660,7 @@ let CACHE_DROPIN_MODS
  */
 function resolveDropinModsForUI(){
     const serv = DistroManager.getDistribution().getServer(ConfigManager.getSelectedServer())
-    CACHE_SETTINGS_MODS_DIR = path.join(ConfigManager.getInstanceDirectory(), 'mods')
+    CACHE_SETTINGS_MODS_DIR = path.join(ConfigManager.getInstanceDirectory(), ConfigManager.getSelectedServer(), 'mods')
     CACHE_DROPIN_MODS = DropinModUtil.scanForDropinMods(CACHE_SETTINGS_MODS_DIR, serv.getMinecraftVersion())
 
     let dropinMods = ''
@@ -799,7 +799,7 @@ let CACHE_SELECTED_SHADERPACK
  */
 function resolveShaderpacksForUI(){
     const serv = DistroManager.getDistribution().getServer(ConfigManager.getSelectedServer())
-    CACHE_SETTINGS_INSTANCE_DIR = path.join(ConfigManager.getInstanceDirectory())
+    CACHE_SETTINGS_INSTANCE_DIR = path.join(ConfigManager.getInstanceDirectory(), ConfigManager.getSelectedServer())
     CACHE_SHADERPACKS = DropinModUtil.scanForShaderpacks(CACHE_SETTINGS_INSTANCE_DIR)
     CACHE_SELECTED_SHADERPACK = DropinModUtil.getEnabledShaderpack(CACHE_SETTINGS_INSTANCE_DIR)
 
