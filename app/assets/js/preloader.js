@@ -67,3 +67,12 @@ fs.remove(path.join(os.tmpdir(), ConfigManager.getTempNativeFolder()), (err) => 
         logger.log('Cleaned natives directory.')
     }
 })
+
+//Clean up mods incase they weren't removed after the game closed, allowing for constant updating
+fs.remove(path.join(ConfigManager.getCommonDirectory(), 'modstore', ), (err) => {
+    if(err){
+        logger.warn('Couldn\'t remove stored Mods to allow for constant updating every launch')
+    } else {
+        logger.log('Successfully checked for a clean mods Folder')
+    }
+})

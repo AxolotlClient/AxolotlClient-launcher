@@ -18,7 +18,7 @@ class ProcessBuilder {
     constructor(distroServer, versionData, forgeData, authUser, launcherVersion){
         this.gameDir = path.join(ConfigManager.getInstanceDirectory())
         this.commonDir = ConfigManager.getCommonDirectory()
-        this.modDir = path.join(this.commonDir, 'modstore/', distroServer.getID())
+        this.modDir = path.join(this.commonDir, 'modstore', distroServer.getID())
         this.server = distroServer
         this.versionData = versionData
         this.forgeData = forgeData

@@ -126,7 +126,47 @@ function showFatalStartupError(){
 function onDistroRefresh(data){
     updateSelectedServer(data.getServer(ConfigManager.getSelectedServer()))
     //refreshServerStatus()
-    //syncModConfigurations(data)
+    syncModConfigurations(data)
+}
+
+/**
+ * Sync the mod configurations with the distro index.
+ *
+ * @param {Object} data The distro index object.
+ */
+function syncModConfigurations(data){
+
+    const syncedCfgs = []
+
+    for(let serv of data.getServers()){
+
+        const id = serv.getID()
+        const mdls = serv.getModules()
+        const cfg = ConfigManager.getModConfiguration(id)
+
+        if(cfg != null){
+
+            const mods = cfg.mods
+
+            syncedCfgs.push({
+                id,
+                mods
+            })
+
+        } else {
+
+            const mods = {}
+
+            syncedCfgs.push({
+                id,
+                mods
+            })
+
+        }
+    }
+
+    ConfigManager.setModConfigurations(syncedCfgs)
+    ConfigManager.save()
 }
 
 function refreshDistributionIndex(remote, onSuccess, onError){
@@ -229,7 +269,7 @@ document.addEventListener('readystatechange', function(){
 ipcRenderer.on('distributionIndexDone', (event, res) => {
     if(res) {
         const data = DistroManager.getDistribution()
-        //syncModConfigurations(data)
+        syncModConfigurations(data)
         if(document.readyState === 'interactive' || document.readyState === 'complete'){
             showMainUI(data)
         } else {
