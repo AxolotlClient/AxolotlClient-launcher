@@ -222,40 +222,13 @@ class JavaGuard extends EventEmitter {
         super()
         this.mcVersion = mcVersion
     }
-
-    /**
-     * @typedef OpenJDKData
-     * @property {string} uri The base uri of the JRE.
-     * @property {number} size The size of the download.
-     * @property {string} name The name of the artifact.
-     */
-
     /**
      * Fetch the last open JDK binary.
-     * 
-     * HOTFIX: Uses Corretto 8 for macOS.
-     * See: https://github.com/dscalzi/HeliosLauncher/issues/70
-     * See: https://github.com/AdoptOpenJDK/openjdk-support/issues/101
      * 
      * @param {string} major The major version of Java to fetch.
      * 
      * @returns {Promise.<OpenJDKData>} Promise which resolved to an object containing the JRE download data.
      */
-    static _latestOpenJDK(major){
-
-        let cleanPlatform
-        if(process.platform === 'win32') {
-            cleanPlatform = "windows"
-        } else {
-            if(process.platform === 'darwin') {
-                cleanPlatform = "mac"
-            }
-            else {
-                cleanPlatform = "linux"
-            }
-        }
-    }
-    
     static _latestJDK(major) {
 
         const majorNum = Number(major)
@@ -352,30 +325,7 @@ class JavaGuard extends EventEmitter {
      */
     static parseJavaRuntimeVersion(verString){
         const major = verString.split('.')[0]
-        if(major == 1){
-            return JavaGuard._parseJavaRuntimeVersion_8(verString)
-        } else {
-            return JavaGuard._parseJavaRuntimeVersion_9(verString)
-        }
-    }
-
-    /**
-     * Parses a **full** Java Runtime version string and resolves
-     * the version information. Uses Java 8 formatting.
-     * 
-     * @param {string} verString Full version string to parse.
-     * @returns Object containing the version information.
-     */
-    static _parseJavaRuntimeVersion_8(verString){
-        // 1.{major}.0_{update}-b{build}
-        // ex. 1.8.0_152-b16
-        const ret = {}
-        let pts = verString.split('-')
-        ret.build = parseInt(pts[1].substring(1))
-        pts = pts[0].split('_')
-        ret.update = parseInt(pts[1])
-        ret.major = parseInt(pts[0].split('.')[1])
-        return ret
+        return JavaGuard._parseJavaRuntimeVersion_9(verString)
     }
 
     /**
@@ -1514,7 +1464,7 @@ class AssetGuard extends EventEmitter {
 
     _enqueueOpenJDK(dataDir){
         return new Promise((resolve, reject) => {
-            JavaGuard._latestOpenJDK(javaVersion).then(verData => {
+            JavaGuard._latestJDK(javaVersion).then(verData => {
                 if(verData != null){
 
                     dataDir = path.join(dataDir, 'runtime', 'x64')
