@@ -21,7 +21,7 @@ const isDev         = require('./isdev')
 //     darwin: '-macosx-x64.tar.gz',
 //     linux: '-linux-x64.tar.gz'
 // }
-const javaVer = '17'
+const javaVersion = '17'
 
 // Classes
 
