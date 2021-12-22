@@ -149,7 +149,7 @@ class ProcessBuilder {
         const sep = process.platform === 'win32' ? ';' : ':'
         const id = this.server.getID()
 
-        if (ConfigManager.getModConfiguration(this.server.getID()).mods.optional == null){
+        if (ConfigManager.getModConfiguration(this.server.getID()).mods.optional != null && ConfigManager.getModConfiguration(this.server.getID()).mods.optional !=undefined){
 
             for (let m of Object.values(ConfigManager.getModConfiguration(this.server.getID()).mods.optional)){
 
