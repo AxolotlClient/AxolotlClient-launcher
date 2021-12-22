@@ -149,20 +149,24 @@ class ProcessBuilder {
         const sep = process.platform === 'win32' ? ';' : ':'
         const id = this.server.getID()
 
-        for (let m of Object.values(ConfigManager.getModConfiguration(this.server.getID()).mods.optional)){
+        if (ConfigManager.getModConfiguration(this.server.getID()).mods.optional == null){
 
-            const pth = this.resolveMod(m)
-            if (i >= 1){
+            for (let m of Object.values(ConfigManager.getModConfiguration(this.server.getID()).mods.optional)){
+
+                const pth = this.resolveMod(m)
+                if (i >= 1){
+                    modArg += sep
+                }
+
+                modArg += pth
+
+                i += 1
+            }
+            if (i > 0){
                 modArg += sep
             }
-
-            modArg += pth
-
-            i += 1
         }
-        if (i > 0){
-            modArg += sep
-        }
+
         modArg += path.join(this.commonDir, 'modstore', id, 'required/')
 
         return modArg
