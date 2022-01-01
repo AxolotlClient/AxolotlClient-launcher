@@ -242,7 +242,7 @@ class JavaGuard extends EventEmitter {
                     const targetBinary = body.find(entry => {
                         return entry.version.major === majorNum
                             && entry.binary.os === sanitizedOS
-                            && entry.binary.image_type === 'jdk'
+                            && entry.binary.image_type === 'jre'
                             && entry.binary.architecture === 'x64'
                     })
 
