@@ -144,7 +144,9 @@ exports.validateSelected = async function(){
         } catch (error) {
             return Promise.reject(error)
         }
-    } else return true
+    } else {
+        logger.log("Account", ConfigManager.getSelectedAccount().displayName, "has a valid Access token!")
+        return true}
 }
 
 exports.addMSAccount = async authCode => {

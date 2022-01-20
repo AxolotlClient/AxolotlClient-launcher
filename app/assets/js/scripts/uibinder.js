@@ -83,6 +83,7 @@ function showMainUI(data){
             $(VIEWS.welcome).fadeIn(1000)
         } else {
             if(isLoggedIn){
+                validateSelectedAccount()
                 currentView = VIEWS.landing
                 $(VIEWS.landing).fadeIn(1000)
             } else {
