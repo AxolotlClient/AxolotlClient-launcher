@@ -91,7 +91,8 @@ const DEFAULT_CONFIG = {
         },
         launcher: {
             allowPrerelease: false,
-            dataDirectory: dataPath
+            dataDirectory: dataPath,
+            keepMods: false
         }
     },
     clientToken: null,
@@ -657,6 +658,27 @@ exports.getAllowPrerelease = function(def = false){
 exports.setAllowPrerelease = function(allowPrerelease){
     config.settings.launcher.allowPrerelease = allowPrerelease
 }
+
+
+/**
+ * Check if stored mods should be kept on Game Closure.
+ *
+ * @param {boolean} def Optional. If true, the default value will be returned.
+ * @returns {boolean} Whether or not stored mods should be kept on Game Closure.
+ */
+exports.getKeepMods = function(def = false){
+    return !def ? config.settings.launcher.keepMods : DEFAULT_CONFIG.settings.launcher.keepMods
+}
+
+/**
+ * Change the status of if stored mods should be kept.
+ *
+ * @param {boolean} keepMods Whether or not stored mods should be kept on Game Closure.
+ */
+exports.setKeepMods = function(keepMods){
+    config.settings.launcher.keepMods = keepMods
+}
+
 
 exports.setMicrosoftAuth = microsoftAuth => {
     config.microsoftAuth = microsoftAuth

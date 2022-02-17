@@ -76,13 +76,15 @@ class ProcessBuilder {
                     showLaunchFailure('Game Closed','We hope you enjoyed!')
                 }
             })
-            fs.remove(this.modDir, (err) => {
-                if(err){
-                  logger.warn('Error while deleting stored mods to allow for constant updating')
-                } else {
-                  logger.log('Stored mods were removed successfully')
-                }
-            })
+            if(!ConfigManager.getKeepMods){
+                fs.remove(this.modDir, (err) => {
+                    if(err){
+                    logger.warn('Error while deleting stored mods to allow for constant updating')
+                    } else {
+                    logger.log('Stored mods were removed successfully')
+                    }
+                })
+            }
         })
 
         return child

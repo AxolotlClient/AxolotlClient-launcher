@@ -30,34 +30,52 @@ function onDistroLoad(data){
 }
 
 // Ensure Distribution is downloaded and cached.
-DistroManager.pullRemote().then((data) => {
-    logger.log('Loaded distribution index.')
-
-    onDistroLoad(data)
-
-}).catch((err) => {
-    logger.log('Failed to load distribution index.')
-    logger.error(err)
-
-    logger.log('Attempting to load an older version of the distribution index.')
-    // Try getting a local copy, better than nothing.
-    DistroManager.pullLocal().then((data) => {
-        logger.log('Successfully loaded an older version of the distribution index.')
+if(!ConfigManager.getKeepMods){
+    DistroManager.pullRemote().then((data) => {
+        logger.log('Loaded distribution index.')
 
         onDistroLoad(data)
 
-
     }).catch((err) => {
-
-        logger.log('Failed to load an older version of the distribution index.')
-        logger.log('Application cannot run.')
+        logger.log('Failed to load distribution index.')
         logger.error(err)
 
-        onDistroLoad(null)
+        logger.log('Attempting to load an older version of the distribution index.')
+        // Try getting a local copy, better than nothing.
+        DistroManager.pullLocal().then((data) => {
+            logger.log('Successfully loaded an older version of the distribution index.')
+
+            onDistroLoad(data)
+
+
+        }).catch((err) => {
+
+            logger.log('Failed to load an older version of the distribution index.')
+            logger.log('Application cannot run.')
+            logger.error(err)
+
+            onDistroLoad(null)
+
+        })
 
     })
+} else {
+    DistroManager.pullLocal().then((data) => {
+            logger.log('Successfully loaded the distribution index from disk.')
 
-})
+            onDistroLoad(data)
+
+
+        }).catch((err) => {
+
+            logger.log('Failed to load the distribution index.')
+            logger.log('Application cannot run.')
+            logger.error(err)
+
+            onDistroLoad(null)
+
+        })
+}
 
 // Clean up temp dir incase previous launches ended unexpectedly. 
 fs.remove(path.join(os.tmpdir(), ConfigManager.getTempNativeFolder()), (err) => {
@@ -69,10 +87,12 @@ fs.remove(path.join(os.tmpdir(), ConfigManager.getTempNativeFolder()), (err) => 
 })
 
 //Clean up mods incase they weren't removed after the game closed, allowing for constant updating
-fs.remove(path.join(ConfigManager.getCommonDirectory(), 'modstore', ), (err) => {
-    if(err){
-        logger.warn('Couldn\'t remove stored Mods to allow for constant updating every launch')
-    } else {
-        logger.log('Successfully checked for a clean mods Folder')
-    }
-})
+if(!ConfigManager.getKeepMods){
+    fs.remove(path.join(ConfigManager.getCommonDirectory(), 'modstore', ), (err) => {
+        if(err){
+            logger.warn('Couldn\'t remove stored Mods to allow for constant updating every launch')
+        } else {
+            logger.log('Successfully checked for a clean mods Folder')
+        }
+    })
+}
