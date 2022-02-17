@@ -22,7 +22,7 @@
     "lint": "eslint --config .eslintrc.json ."
   },
   "engines": {
-    "node": "16.x.x"
+    "node": "17.x.x"
   },
   "dependencies": {
     "@electron/remote": "^2.0.1",
