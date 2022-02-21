@@ -652,6 +652,11 @@ function dlAsync(login = true){
                 let pb = new ProcessBuilder(serv, versionData, forgeData, authUser, remote.app.getVersion())
                 setLaunchDetails('Launching game..')
                 setOverlayContent('Game Started','Have Fun!','Okay')
+                if(ConfigManager.getMinimizeOnLaunch()){
+                    const window = remote.getCurrentWindow()
+                    window.minimize()
+
+                }
                 setOverlayHandler(() => {
                     toggleOverlay(false)
                     toggleLaunchArea(false)

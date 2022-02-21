@@ -128,11 +128,6 @@ function showUpdateUI(info){
     }
 }
 
-/* jQuery Example
-$(function(){
-    loggerUICore.log('UICore Initialized');
-})*/
-
 document.addEventListener('readystatechange', function () {
     if (document.readyState === 'interactive'){
         loggerUICore.log('UICore Initializing..')

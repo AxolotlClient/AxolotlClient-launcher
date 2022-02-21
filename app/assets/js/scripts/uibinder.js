@@ -126,7 +126,6 @@ function showFatalStartupError(){
  */
 function onDistroRefresh(data){
     updateSelectedServer(data.getServer(ConfigManager.getSelectedServer()))
-    //refreshServerStatus()
     syncModConfigurations(data)
 }
 
@@ -210,7 +209,7 @@ async function validateSelectedAccount(){
                     loginCancelEnabled(true)
                 }
                 toggleOverlay(false)
-                switchView(getCurrentView(), VIEWS.login)
+                ipcRenderer.send('openMSALoginWindow', 'open')
             })
             setDismissHandler(() => {
                 if(accLen > 1){

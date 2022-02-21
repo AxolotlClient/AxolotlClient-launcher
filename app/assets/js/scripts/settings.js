@@ -316,11 +316,10 @@ settingsNavDone.onclick = () => {
 
 // Bind the add account button.
 document.getElementById('settingsAddAccount').onclick = (e) => {
-    switchView(getCurrentView(), VIEWS.login, 500, 500, () => {
-        loginViewOnCancel = VIEWS.settings
-        loginViewOnSuccess = VIEWS.settings
-        loginCancelEnabled(true)
-    })
+    ipcRenderer.send('openMSALoginWindow', 'open')
+    loginViewOnCancel = VIEWS.settings
+    loginViewOnSuccess = VIEWS.settings
+    loginCancelEnabled(true)
 }
 
 /**

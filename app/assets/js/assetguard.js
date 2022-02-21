@@ -169,12 +169,15 @@ class Util {
 
     static isForgeGradle3(mcVersion, forgeVersion) {
 
+
+
         if(Util.mcVersionAtLeast('1.13', mcVersion)) {
             return true
         }
+        return false
 
         try {
-            
+
             const forgeVer = forgeVersion.split('-')[1]
 
             const maxFG2 = [14, 23, 5, 2847]
@@ -187,7 +190,7 @@ class Util {
                     return false
                 }
             }
-        
+
             return false
 
         } catch(err) {

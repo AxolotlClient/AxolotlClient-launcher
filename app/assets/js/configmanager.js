@@ -92,6 +92,7 @@ const DEFAULT_CONFIG = {
         launcher: {
             allowPrerelease: false,
             dataDirectory: dataPath,
+            minimizeOnLaunch: true,
             keepMods: false
         }
     },
@@ -657,6 +658,25 @@ exports.getAllowPrerelease = function(def = false){
  */
 exports.setAllowPrerelease = function(allowPrerelease){
     config.settings.launcher.allowPrerelease = allowPrerelease
+}
+
+/**
+ * Check if the launcher should be minimized when the game launches.
+ *
+ * @param {boolean} def Optional. If true, the default value will be returned.
+ * @returns {boolean} Whether or not the launcher should be minimized when the game launches.
+ */
+exports.getMinimizeOnLaunch = function(def = false){
+    return !def ? config.settings.launcher.minimizeOnLaunch : DEFAULT_CONFIG.settings.launcher.minimizeOnLaunch
+}
+
+/**
+ * Change the status of if the launcher should be minimized when the game launches.
+ *
+ * @param {boolean} val Whether or not the launcher should be minimized when the game launches.
+ */
+exports.setMinimizeOnLaunch = function(val){
+    config.settings.launcher.minimizeOnLaunch = val
 }
 
 

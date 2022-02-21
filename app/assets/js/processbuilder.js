@@ -67,6 +67,7 @@ class ProcessBuilder {
             loggerMCstderr.log(data)
         })
         child.on('close', (code, signal) => {
+            remote.getCurrentWindow().restore()
             logger.log('Exited with code', code)
             fs.remove(tempNativePath, (err) => {
                 if(err){
