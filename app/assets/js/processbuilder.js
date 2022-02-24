@@ -67,7 +67,9 @@ class ProcessBuilder {
             loggerMCstderr.log(data)
         })
         child.on('close', (code, signal) => {
-            remote.getCurrentWindow().restore()
+            if(ConfigManager.getMinimizeOnLaunch()){
+                remote.getCurrentWindow().restore()
+            }
             logger.log('Exited with code', code)
             fs.remove(tempNativePath, (err) => {
                 if(err){
@@ -77,7 +79,7 @@ class ProcessBuilder {
                     showLaunchFailure('Game Closed','We hope you enjoyed!')
                 }
             })
-            if(!ConfigManager.getKeepMods){
+            if(!ConfigManager.getKeepMods()){
                 fs.remove(this.modDir, (err) => {
                     if(err){
                     logger.warn('Error while deleting stored mods to allow for constant updating')

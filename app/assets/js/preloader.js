@@ -29,8 +29,9 @@ function onDistroLoad(data){
     ipcRenderer.send('distributionIndexDone', data != null)
 }
 
+logger.log("Offline Mode: "+ConfigManager.getKeepMods())
 // Ensure Distribution is downloaded and cached.
-if(!ConfigManager.getKeepMods){
+if(!ConfigManager.getKeepMods()){
     DistroManager.pullRemote().then((data) => {
         logger.log('Loaded distribution index.')
 
@@ -68,7 +69,7 @@ if(!ConfigManager.getKeepMods){
 
         }).catch((err) => {
 
-            logger.log('Failed to load the distribution index.')
+            logger.log('Failed to load the distribution index from disk.')
             logger.log('Application cannot run.')
             logger.error(err)
 
@@ -87,7 +88,7 @@ fs.remove(path.join(os.tmpdir(), ConfigManager.getTempNativeFolder()), (err) => 
 })
 
 //Clean up mods incase they weren't removed after the game closed, allowing for constant updating
-if(!ConfigManager.getKeepMods){
+if(!ConfigManager.getKeepMods()){
     fs.remove(path.join(ConfigManager.getCommonDirectory(), 'modstore', ), (err) => {
         if(err){
             logger.warn('Couldn\'t remove stored Mods to allow for constant updating every launch')
