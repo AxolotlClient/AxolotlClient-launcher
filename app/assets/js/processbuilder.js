@@ -44,8 +44,7 @@ class ProcessBuilder {
 
         let args = this.constructJVMArguments(tempNativePath, this.server.getModules())
 
-
-        const child = child_process.spawn(ConfigManager.getJavaExecutable(), args, {
+        const child = child_process.spawn(Util.mcVersionAtLeast("1.16", this.server.getMinecraftVersion()) ? ConfigManager.getJava17Executable(): ConfigManager.getJava8Executable(), args, {
             cwd: this.gameDir,
             detached: ConfigManager.getLaunchDetached()
         })
@@ -188,7 +187,83 @@ class ProcessBuilder {
     constructJVMArguments(tempNativePath, mods){
         if(Util.mcVersionAtLeast('1.13', this.server.getMinecraftVersion())){
             return this._constructJVMArguments113(tempNativePath, mods)
+        } else {
+            return this._constructJVMArguments112(mods, tempNativePath)
         }
+    }
+
+    _constructJVMArguments112(mods, tempNativePath){
+
+        const argDiscovery = /\${*(.*)}/
+        let args = []
+
+        //Construct Mods
+        const modArg = this.constructModArguments()
+
+        args.push('-Dfabric.addMods='+modArg)
+
+        // Classpath Argument
+        args.push('-cp')
+        args.push(this.classpathArg(mods, tempNativePath))
+
+        // Java Arguments
+        if(process.platform === 'darwin'){
+            args.push('-Xdock:name=AxolotlClient')
+            args.push('-Xdock:icon=' + path.join(__dirname, '..', 'images', 'minecraft.icns'))
+        }
+        args.push('-Xmx' + ConfigManager.getMaxRAM())
+        args.push('-Xms' + ConfigManager.getMinRAM())
+        args = args.concat(ConfigManager.getJVMOptions())
+        args.push('-Djava.library.path=' + tempNativePath)
+
+        // Java Arguments
+        if(process.platform === 'darwin'){
+            args.push('-Xdock:name=AxolotlClient')
+            args.push('-Xdock:icon=' + path.join(__dirname, '..', 'images', 'minecraft.icns'))
+        }
+        args.push('-Xmx' + ConfigManager.getMaxRAM())
+        args.push('-Xms' + ConfigManager.getMinRAM())
+        args = args.concat(ConfigManager.getJVMOptions())
+
+        // Main Java Class
+        args.push(this.forgeData.mainClass)
+
+        args.push("--username")
+        args.push(this.authUser.displayName.trim())
+        args.push("--version")
+        args.push(this.server.getID())
+
+
+        args.push("--versionType")
+        args.push("AxolotlClient")
+
+        args.push("--gameDir")
+        args.push(this.gameDir)
+
+        args.push("--assetsDir")
+        args.push(path.join(this.commonDir, 'assets'))
+
+        args.push("--assetIndex")
+        args.push(this.versionData.assets)
+
+        args.push("--accessToken")
+        args.push(this.authUser.accessToken)
+
+        args.push("--uuid")
+        args.push(this.authUser.uuid.trim())
+
+        // Prepare game resolution
+        if(ConfigManager.getFullscreen()){
+            args.push('--fullscreen')
+            args.push(true)
+        } else {
+            args.push('--width')
+            args.push(ConfigManager.getGameWidth())
+            args.push('--height')
+            args.push(ConfigManager.getGameHeight())
+        }
+
+        return args
     }
 
     /**
@@ -275,6 +350,7 @@ class ProcessBuilder {
                 if(argDiscovery.test(args[i])){
                     const identifier = args[i].match(argDiscovery)[1]
                     let val = null
+
                     switch(identifier){
                         case 'auth_player_name':
                             val = this.authUser.displayName.trim()

@@ -74,7 +74,8 @@ const DEFAULT_CONFIG = {
         java: {
             minRAM: resolveMinRAM(),
             maxRAM: resolveMaxRAM(), // Dynamic
-            executable: null,
+            executable8: null,
+            executable17: null,
             jvmOptions: [
                 '-XX:+UseG1GC',
                 //'-XX:+CMSIncrementalMode',
@@ -483,8 +484,8 @@ exports.setMaxRAM = function(maxRAM){
  * 
  * @returns {string} The path of the Java Executable.
  */
-exports.getJavaExecutable = function(){
-    return config.settings.java.executable
+exports.getJava8Executable = function(){
+    return config.settings.java.executable8
 }
 
 /**
@@ -492,8 +493,28 @@ exports.getJavaExecutable = function(){
  * 
  * @param {string} executable The new path of the Java Executable.
  */
-exports.setJavaExecutable = function(executable){
-    config.settings.java.executable = executable
+exports.setJava8Executable = function(executable){
+    config.settings.java.executable8 = executable
+}
+
+/**
+ * Retrieve the path of the Java Executable.
+ *
+ * This is a resolved configuration value and defaults to null until externally assigned.
+ *
+ * @returns {string} The path of the Java Executable.
+ */
+exports.getJava17Executable = function(){
+    return config.settings.java.executable17
+}
+
+/**
+ * Set the path of the Java Executable.
+ *
+ * @param {string} executable The new path of the Java Executable.
+ */
+exports.setJava17Executable = function(executable){
+    config.settings.java.executable17 = executable
 }
 
 /**

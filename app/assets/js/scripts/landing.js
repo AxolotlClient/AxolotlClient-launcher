@@ -91,7 +91,13 @@ function setLaunchEnabled(val){
 document.getElementById('launch_button').addEventListener('click', function(e){
     loggerLanding.log('Launching game..')
     const mcVersion = DistroManager.getDistribution().getServer(ConfigManager.getSelectedServer()).getMinecraftVersion()
-    const jExe = ConfigManager.getJavaExecutable()
+    console.log(mcVersion)
+    var jExe
+    if(mcVersion === "1.8.9"){
+        jExe = ConfigManager.getJava8Executable()
+    } else {
+        jExe = ConfigManager.getJava17Executable()
+    }
     if(jExe == null){
         asyncSystemScan(mcVersion)
     } else {
@@ -147,7 +153,7 @@ function updateSelectedServer(serv){
     }
     ConfigManager.setSelectedServer(serv != null ? serv.getID() : null)
     ConfigManager.save()
-    server_selection_button.innerHTML = '\u2022 ' + (serv != null ? serv.getName() : 'No Server Selected')
+    server_selection_button.innerHTML = serv != null ? serv.getName() : 'No Server Selected'
     if(getCurrentView() === VIEWS.settings){
         animateModsTabRefresh()
     }
@@ -159,105 +165,7 @@ server_selection_button.onclick = (e) => {
     e.target.blur()
     toggleServerSelection(true)
 }
-/*
-// Update Mojang Status Color
-const refreshMojangStatuses = async function(){
-    loggerLanding.log('Refreshing Mojang Statuses..')
 
-    let status = 'grey'
-    let tooltipEssentialHTML = ''
-    let tooltipNonEssentialHTML = ''
-
-    try {
-        const statuses = await Mojang.status()
-        greenCount = 0
-        greyCount = 0
-
-        for(let i=0; i<statuses.length; i++){
-            const service = statuses[i]
-
-            if(service.essential){
-                tooltipEssentialHTML += `<div class="mojangStatusContainer">
-                    <span class="mojangStatusIcon" style="color: ${Mojang.statusToHex(service.status)};">&#8226;</span>
-                    <span class="mojangStatusName">${service.name}</span>
-                </div>`
-            } else {
-                tooltipNonEssentialHTML += `<div class="mojangStatusContainer">
-                    <span class="mojangStatusIcon" style="color: ${Mojang.statusToHex(service.status)};">&#8226;</span>
-                    <span class="mojangStatusName">${service.name}</span>
-                </div>`
-            }
-
-            if(service.status === 'yellow' && status !== 'red'){
-                status = 'yellow'
-            } else if(service.status === 'red'){
-                status = 'red'
-            } else {
-                if(service.status === 'grey'){
-                    ++greyCount
-                }
-                ++greenCount
-            }
-
-        }
-
-        if(greenCount === statuses.length){
-            if(greyCount === statuses.length){
-                status = 'grey'
-            } else {
-                status = 'green'
-            }
-        }
-
-    } catch (err) {
-        loggerLanding.warn('Unable to refresh Mojang service status.')
-        loggerLanding.debug(err)
-    }
-    
-    document.getElementById('mojangStatusEssentialContainer').innerHTML = tooltipEssentialHTML
-    document.getElementById('mojangStatusNonEssentialContainer').innerHTML = tooltipNonEssentialHTML
-    document.getElementById('mojang_status_icon').style.color = Mojang.statusToHex(status)
-}
-
-const refreshServerStatus = async function(fade = false){
-    loggerLanding.log('Refreshing Server Status')
-    const serv = DistroManager.getDistribution().getServer(ConfigManager.getSelectedServer())
-
-    let pLabel = 'SERVER'
-    let pVal = 'OFFLINE'
-
-    try {
-        const serverURL = new URL('my://' + serv.getAddress())
-        const servStat = await ServerStatus.getStatus(serverURL.hostname, serverURL.port)
-        if(servStat.online){
-            pLabel = 'PLAYERS'
-            pVal = servStat.onlinePlayers + '/' + servStat.maxPlayers
-        }
-
-    } catch (err) {
-        loggerLanding.warn('Unable to refresh server status, assuming offline.')
-        loggerLanding.debug(err)
-    }
-    if(fade){
-        $('#server_status_wrapper').fadeOut(250, () => {
-            document.getElementById('landingPlayerLabel').innerHTML = pLabel
-            document.getElementById('player_count').innerHTML = pVal
-            $('#server_status_wrapper').fadeIn(500)
-        })
-    } else {
-        document.getElementById('landingPlayerLabel').innerHTML = pLabel
-        document.getElementById('player_count').innerHTML = pVal
-    }
-    
-}
-
-refreshMojangStatuses()
-// Server Status is refreshed in uibinder.js on distributionIndexDone.
-
-// Set refresh rate to once every 5 minutes.
-let mojangStatusListener = setInterval(() => refreshMojangStatuses(true), 300000)
-let serverStatusListener = setInterval(() => refreshServerStatus(true), 300000)
-*/
 /**
  * Shows an error overlay, toggles off the launch area.
  * 
@@ -360,7 +268,11 @@ function asyncSystemScan(mcVersion, launchAfter = true){
 
             } else {
                 // Java installation found, use this to launch the game.
-                ConfigManager.setJavaExecutable(m.result)
+                if(DistroManager.getDistribution().getServer(ConfigManager.getSelectedServer()).getMinecraftVersion() < "1.16"){
+                    ConfigManager.setJava8Executable(m.result)
+                } else {
+                    ConfigManager.setJava17Executable(m.result)
+                }
                 ConfigManager.save()
 
                 // We need to make sure that the updated value is on the settings UI.
@@ -466,7 +378,7 @@ function asyncSystemScan(mcVersion, launchAfter = true){
 // Keep reference to Minecraft Process
 let proc
 // Is DiscordRPC enabled
-let hasRPC = true
+let hasRPC = false
 // Joined server regex
 // Change this if your server uses something different.
 const GAME_JOINED_REGEX = /\[.+\]: Sound engine started/
@@ -505,8 +417,8 @@ function dlAsync(login = true){
     // Start AssetExec to run validations and downloads in a forked process.
     aEx = cp.fork(path.join(__dirname, 'assets', 'js', 'assetexec.js'), [
         'AssetGuard',
-        ConfigManager.getCommonDirectory(),
-        ConfigManager.getJavaExecutable()
+        ConfigManager.getCommonDirectory(), DistroManager.getDistribution().getServer(ConfigManager.getSelectedServer()).getMinecraftVersion() < "1.16"?
+        ConfigManager.getJava8Executable(): ConfigManager.getJava17Executable()
     ], {
         env: forkEnv,
         stdio: 'pipe'

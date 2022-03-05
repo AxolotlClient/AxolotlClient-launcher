@@ -131,7 +131,10 @@ function initSettingsValues(){
             if(v.tagName === 'INPUT'){
                 if(v.type === 'number' || v.type === 'text'){
                     // Special Conditions
-                    if(cVal === 'JavaExecutable'){
+                    if(cVal === 'Java8Executable'){
+                        populateJavaExecDetails(v.value)
+                        v.value = gFn()
+                    }else if (cVal === 'Java17Executable'){
                         populateJavaExecDetails(v.value)
                         v.value = gFn()
                     } else if (cVal === 'DataDirectory'){

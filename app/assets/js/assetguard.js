@@ -1423,7 +1423,6 @@ class AssetGuard extends EventEmitter {
             for(let ob of modules){
                 const type = ob.getType()
                 if(type === DistroManager.Types.Loader){
-                    if(Util.isForgeGradle3(server.getMinecraftVersion(), ob.getVersion())){
                         // Read Manifest
                         for(let sub of ob.getSubModules()){
                             if(sub.getType() === DistroManager.Types.VersionManifest){
@@ -1434,18 +1433,7 @@ class AssetGuard extends EventEmitter {
                         reject('No forge version manifest found!')
                         console.log(server.getMinecraftVersion(), ob.getVersion(), Util.isForgeGradle3(server.getMinecraftVersion(), ob.getVersion()),JSON.parse(fs.readFileSync(sub.getArtifact().getPath(), 'utf-8')))
                         return
-                    } else {
-                        let obArtifact = ob.getArtifact()
-                        let obPath = obArtifact.getPath()
-                        let asset = new DistroModule(ob.getIdentifier(), obArtifact.getHash(), obArtifact.getSize(), obArtifact.getURL(), obPath, type)
-                        try {
-                            let forgeData = await AssetGuard._finalizeForgeAsset(asset, self.commonPath)
-                            resolve(forgeData)
-                        } catch (err){
-                            reject(err)
-                        }
-                        return
-                    }
+
                 }
             }
             reject('No forge module found!')
