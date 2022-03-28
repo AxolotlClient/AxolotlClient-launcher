@@ -1,4 +1,5 @@
-require('@electron/remote/main').initialize()
+const remoteMain = require('@electron/remote/main')
+remoteMain.initialize()
 
 // Requirements
 const { app, BrowserWindow, ipcMain, Menu } = require('electron')
@@ -8,7 +9,7 @@ const fs                            = require('fs')
 const isDev                         = require('./app/assets/js/isdev')
 const path                          = require('path')
 const semver                        = require('semver')
-const url                           = require('url')
+const { pathToFileURL }                 = require('url')
 const redirectUriPrefix = 'https://login.microsoftonline.com/common/oauth2/nativeclient?'
 const clientID = '938592fc-8e01-4c6d-b56d-428c7d9cf5ea'
 
@@ -22,7 +23,7 @@ function initAutoUpdater(event, data) {
         // Defaults to true if application version contains prerelease components (e.g. 0.12.1-alpha.1)
         // autoUpdater.allowPrerelease = true
     }
-    
+
     if(isDev){
         autoUpdater.autoInstallOnAppQuit = false
         autoUpdater.updateConfigPath = path.join(__dirname, 'dev-app-update.yml')
@@ -44,7 +45,7 @@ function initAutoUpdater(event, data) {
     })
     autoUpdater.on('error', (err) => {
         event.sender.send('autoUpdateNotification', 'realerror', err)
-    }) 
+    })
 }
 
 // Open channel to listen for update actions.
@@ -86,16 +87,12 @@ ipcMain.on('distributionIndexDone', (event, res) => {
     event.sender.send('distributionIndexDone', res)
 })
 
-// Disable hardware acceleration.
-// https://electronjs.org/docs/tutorial/offscreen-rendering
-//app.disableHardwareAcceleration()
-
 // https://github.com/electron/electron/issues/18397
 let MSALoginWindow = null
 
 // Open the Microsoft Account Login window
 ipcMain.on('openMSALoginWindow', (ipcEvent, args) => {
-    if(MSALoginWindow != null){ 
+    if(MSALoginWindow != null){
         ipcEvent.sender.send('MSALoginWindowNotification', 'error', 'AlreadyOpenException')
         return
     }
@@ -133,9 +130,6 @@ ipcMain.on('openMSALoginWindow', (ipcEvent, args) => {
     MSALoginWindow.loadURL('https://login.microsoftonline.com/consumers/oauth2/v2.0/authorize?prompt=select_account&client_id=' + clientID + '&response_type=code&scope=XboxLive.signin%20offline_access&redirect_uri=https://login.microsoftonline.com/common/oauth2/nativeclient')
 })
 
-
-app.allowRendererProcessReuse = true
-
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let win
@@ -163,19 +157,16 @@ function createWindow() {
             preload: path.join(__dirname, 'app', 'assets', 'js', 'preloader.js'),
             nodeIntegration: true,
             contextIsolation: false,
-            enableRemoteModule: true,
-            worldSafeExecuteJavaScript: true
+            enableRemoteModule: true
         },
         backgroundColor: '#171614'
     })
 
+    remoteMain.enable(win.webContents)
+
     ejse.data('bkid', Math.floor((Math.random() * fs.readdirSync(path.join(__dirname, 'app', 'assets', 'images', 'backgrounds')).length)))
 
-    win.loadURL(url.format({
-        pathname: path.join(__dirname, 'app', 'app.ejs'),
-        protocol: 'file:',
-        slashes: true
-    }))
+    win.loadURL(pathToFileURL(path.join(__dirname, 'app', 'app.ejs')).toString())
 
     /*win.once('ready-to-show', () => {
         win.show()
@@ -191,7 +182,7 @@ function createWindow() {
 }
 
 function createMenu() {
-    
+
     if(process.platform === 'darwin') {
 
         // Extend default included application menu to continue support for quit keyboard shortcut
