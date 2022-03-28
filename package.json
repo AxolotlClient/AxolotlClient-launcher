@@ -25,26 +25,26 @@
     "node": "17.x.x"
   },
   "dependencies": {
-    "@electron/remote": "^2.0.1",
+    "@electron/remote": "^2.0.8",
     "adm-zip": "^0.5.7",
     "async": "^3.2.1",
     "discord-rpc": "^3.2.0",
     "ejs": "^3.1.6",
     "ejs-electron": "^2.1.1",
     "electron-updater": "^5.0.0",
-    "fs-extra": "^9.1.0",
+    "fs-extra": "^10.0.1",
     "github-syntax-dark": "^0.5.0",
     "jquery": "^3.6.0",
     "request": "^2.88.2",
-    "semver": "^7.3.4",
+    "semver": "^7.3.5",
     "tar-fs": "^2.1.1",
     "winreg": "^1.2.4"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",
-    "electron": "^13.6.6",
+    "electron": "^17.2.0",
     "electron-builder": "^23.0.2",
-    "eslint": "^7.32.0"
+    "eslint": "^8.11.0"
   },
   "repository": {
     "type": "git",
