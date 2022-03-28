@@ -328,7 +328,30 @@ class JavaGuard extends EventEmitter {
      */
     static parseJavaRuntimeVersion(verString){
         const major = verString.split('.')[0]
-        return JavaGuard._parseJavaRuntimeVersion_9(verString)
+        if(major == 1){
+            return JavaGuard._parseJavaRuntimeVersion_8(verString)
+        } else {
+            return JavaGuard._parseJavaRuntimeVersion_9(verString)
+        }
+    }
+
+    /**
+     * Parses a **full** Java Runtime version string and resolves
+     * the version information. Uses Java 8 formatting.
+     *
+     * @param {string} verString Full version string to parse.
+     * @returns Object containing the version information.
+     */
+    static _parseJavaRuntimeVersion_8(verString){
+        // 1.{major}.0_{update}-b{build}
+        // ex. 1.8.0_152-b16
+        const ret = {}
+        let pts = verString.split('-')
+        ret.build = parseInt(pts[1].substring(1))
+        pts = pts[0].split('_')
+        ret.update = parseInt(pts[1])
+        ret.major = parseInt(pts[0].split('.')[1])
+        return ret
     }
 
     /**
@@ -490,7 +513,9 @@ class JavaGuard extends EventEmitter {
             // Keys for Java 1.8 and prior:
             const regKeys = [
                 '\\SOFTWARE\\JavaSoft\\JRE',
-                '\\SOFTWARE\\JavaSoft\\JDK'
+                '\\SOFTWARE\\JavaSoft\\JDK',
+                '\\SOFTWARE\\JavaSoft\\Java Runtime Environment',
+                '\\SOFTWARE\\JavaSoft\\Java Development Kit'
             ]
 
             let keysDone = 0
@@ -1455,7 +1480,7 @@ class AssetGuard extends EventEmitter {
 
     _enqueueOpenJDK(dataDir){
         return new Promise((resolve, reject) => {
-            JavaGuard._latestJDK(javaVersion).then(verData => {
+            JavaGuard._latestJDK(Util.mcVersionAtLeast("1.16", this.server.getMinecraftVersion()) ? javaVersion: '8').then(verData => {
                 if(verData != null){
 
                     dataDir = path.join(dataDir, 'runtime', 'x64')
