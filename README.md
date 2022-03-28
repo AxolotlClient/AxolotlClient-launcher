@@ -7,7 +7,7 @@
 
 <p align="center">Join servers without worrying about installing Java, Fabric, or other mods. We'll handle that for you.</p>
 
-![Screenshot1](./build/screenshot-1.png)
+![Screenshot2](./build/screenshot-2.png)
 <!--![Screenshot 2](https://i.imgur.com/x3B34n1.png)-->
 
 ## Features
