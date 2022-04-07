@@ -52,7 +52,7 @@ builder.build({
             description: 'Modded Minecraft Client based on fabric. All mods, configurations, and updates are handled automatically.',
             category: 'Game'
         },
-        compression: 'maximum',
+        compression: 'store',
         files: [
             '!{dist,.gitignore,.vscode,docs,dev-app-update.yml,.travis.yml,.nvmrc,.eslintrc.json,build.js}'
         ],
