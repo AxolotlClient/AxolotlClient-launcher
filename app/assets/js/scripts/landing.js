@@ -240,7 +240,7 @@ function asyncSystemScan(mcVersion, launchAfter = true){
                 )
                 setOverlayHandler(() => {
                     setLaunchDetails('Preparing Java Download..')
-                    sysAEx.send({task: 'changeContext', class: 'AssetGuard', args: [ConfigManager.getCommonDirectory(),ConfigManager.getJavaExecutable()]})
+                    sysAEx.send({task: 'changeContext', class: 'AssetGuard', args: [ConfigManager.getCommonDirectory(),Util.mcVersionAtLeast("1.16", this.server.getMinecraftVersion()) ? ConfigManager.getJava17Executable(): ConfigManager.getJava8Executable()]})
                     sysAEx.send({task: 'execute', function: '_enqueueOpenJDK', argsArr: [ConfigManager.getDataDirectory()]})
                     toggleOverlay(false)
                 })
@@ -249,7 +249,7 @@ function asyncSystemScan(mcVersion, launchAfter = true){
                         //$('#overlayDismiss').toggle(false)
                         setOverlayContent(
                             'Java is Required<br>to Launch',
-                            'A valid x64 installation of Java 16 is required to launch.<br><br>Please refer to our <a href="https://github.com/moehreag/AxolotlClient/wiki/Java-Management#manually-installing-a-valid-version-of-java">Java Management Guide</a> for instructions on how to manually install Java.',
+                            'A valid x64 installation of Java 8/17 is required to launch.<br><br>Please refer to our <a href="https://github.com/moehreag/AxolotlClient/wiki/Java-Management#manually-installing-a-valid-version-of-java">Java Management Guide</a> for instructions on how to manually install Java.',
                             'I Understand',
                             'Go Back'
                         )
