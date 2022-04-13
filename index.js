@@ -134,15 +134,14 @@ ipcMain.on('openMSALoginWindow', (ipcEvent, args) => {
 // be closed automatically when the JavaScript object is garbage collected.
 let win
 
-let Frame = true
 function useFrame() {
     if (process.platform === 'linux' ) {
-        useFrame = true
+        Frame = true
     } else {
-        useFrame = false
+        Frame = false
     }
 
-    return useFrame
+    return Frame
 }
 
 

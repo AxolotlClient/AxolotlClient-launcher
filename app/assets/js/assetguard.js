@@ -169,33 +169,7 @@ class Util {
 
     static isForgeGradle3(mcVersion, forgeVersion) {
 
-
-
-        if(Util.mcVersionAtLeast('1.13', mcVersion)) {
-            return true
-        }
-        return false
-
-        try {
-
-            const forgeVer = forgeVersion.split('-')[1]
-
-            const maxFG2 = [14, 23, 5, 2847]
-            const verSplit = forgeVer.split('.').map(v => Number(v))
-
-            for(let i=0; i<maxFG2.length; i++) {
-                if(verSplit[i] > maxFG2[i]) {
-                    return true
-                } else if(verSplit[i] < maxFG2[i]) {
-                    return false
-                }
-            }
-
-            return false
-
-        } catch(err) {
-            throw new Error('Forge version is complex (changed).. launcher requires a patch.')
-        }
+        return true
     }
 
     static isAutoconnectBroken(forgeVersion) {
@@ -408,26 +382,30 @@ class JavaGuard extends EventEmitter {
                 const verOb = JavaGuard.parseJavaRuntimeVersion(verString)
                 if(verOb.major >= 17){
                     // Java 17+
-                    if(verOb.major >= 17){
+
+                    meta.version = verOb
+                    ++checksum
+                    if(checksum === goal){
+                        break
+                    }
+
+                } else {
+                    // Java <16
+                    if(Util.mcVersionAtLeast('1.17', this.mcVersion)){
+                        console.log('Java <17 not supported on 1.18+.')
+
+                    } else if (verOb.major < 8) {
+                        console.log('Java <8 is not supported')
+                    } else {
                         meta.version = verOb
                         ++checksum
                         if(checksum === goal){
                             break
                         }
                     }
-                } else {
-                    // Java <16
-                    if(Util.mcVersionAtLeast('1.18', this.mcVersion)){
-                        console.log('Java <17 not supported on 1.18+.')
-                        /* meta.version = verOb
-                        ++checksum
-                        if(checksum === goal){
-                            break
-                        } */
-                    }
                 }
                 // Space included so we get only the vendor.
-            } else if(props[i].lastIndexOf('java.vendor ') > -1) {
+            } else if(props[i].lastIndexOf('java.specification.vendor ') > -1) {
                 let vendorName = props[i].split('=')[1].trim()
                 meta.vendor = vendorName
             }
@@ -1465,22 +1443,14 @@ class AssetGuard extends EventEmitter {
         })
     }
 
-    _parseForgeLibraries(){
-        /* TODO
-        * Forge asset validations are already implemented. When there's nothing much
-        * to work on, implement forge downloads using forge's version.json. This is to
-        * have the code on standby if we ever need it (since it's half implemented already).
-        */
-    }
-
     // #endregion
 
     // Java (Category=''') Validation (download) Functions
     // #region
 
-    _enqueueOpenJDK(dataDir){
+    _enqueueOpenJDK(dataDir, mcVersion){
         return new Promise((resolve, reject) => {
-            JavaGuard._latestJDK(Util.mcVersionAtLeast("1.16", this.server.getMinecraftVersion()) ? javaVersion: '8').then(verData => {
+            JavaGuard._latestJDK(Util.mcVersionAtLeast("1.16", mcVersion) ? javaVersion: '8').then(verData => {
                 if(verData != null){
 
                     dataDir = path.join(dataDir, 'runtime', 'x64')

@@ -11,6 +11,7 @@ const DiscordWrapper          = require('./assets/js/discordwrapper')
 const Mojang                  = require('./assets/js/mojang')
 const ProcessBuilder          = require('./assets/js/processbuilder')
 const ServerStatus            = require('./assets/js/serverstatus')
+const {Util, AssetGuard}                    = require('./assets/js/assetguard')
 
 // Launch Elements
 const launch_content          = document.getElementById('launch_content')
@@ -91,9 +92,8 @@ function setLaunchEnabled(val){
 document.getElementById('launch_button').addEventListener('click', function(e){
     loggerLanding.log('Launching game..')
     const mcVersion = DistroManager.getDistribution().getServer(ConfigManager.getSelectedServer()).getMinecraftVersion()
-    console.log(mcVersion)
     var jExe
-    if(mcVersion === "1.8.9"){
+    if(!Util.mcVersionAtLeast("1.16", mcVersion)){
         jExe = ConfigManager.getJava8Executable()
     } else {
         jExe = ConfigManager.getJava17Executable()
@@ -229,6 +229,7 @@ function asyncSystemScan(mcVersion, launchAfter = true){
     sysAEx.on('message', (m) => {
 
         if(m.context === 'validateJava'){
+
             if(m.result == null){
                 // If the result is null, no valid Java installation was found.
                 // Show this information to the user.
@@ -240,8 +241,10 @@ function asyncSystemScan(mcVersion, launchAfter = true){
                 )
                 setOverlayHandler(() => {
                     setLaunchDetails('Preparing Java Download..')
-                    sysAEx.send({task: 'changeContext', class: 'AssetGuard', args: [ConfigManager.getCommonDirectory(),Util.mcVersionAtLeast("1.16", this.server.getMinecraftVersion()) ? ConfigManager.getJava17Executable(): ConfigManager.getJava8Executable()]})
-                    sysAEx.send({task: 'execute', function: '_enqueueOpenJDK', argsArr: [ConfigManager.getDataDirectory()]})
+                    var javaExec = Util.mcVersionAtLeast("1.16", DistroManager.getDistribution().getServer(ConfigManager.getSelectedServer()).getMinecraftVersion()) ?
+                    ConfigManager.getJava17Executable() : ConfigManager.getJava8Executable()
+                    sysAEx.send({task: 'changeContext', class: 'AssetGuard', args: [ConfigManager.getCommonDirectory(), javaExec]})
+                    sysAEx.send({task: 'execute', function: '_enqueueOpenJDK', argsArr: [ConfigManager.getDataDirectory(), DistroManager.getDistribution().getServer(ConfigManager.getSelectedServer()).getMinecraftVersion()]})
                     toggleOverlay(false)
                 })
                 setDismissHandler(() => {
@@ -268,7 +271,7 @@ function asyncSystemScan(mcVersion, launchAfter = true){
 
             } else {
                 // Java installation found, use this to launch the game.
-                if(DistroManager.getDistribution().getServer(ConfigManager.getSelectedServer()).getMinecraftVersion() < "1.16"){
+                if(!Util.mcVersionAtLeast("1.16", DistroManager.getDistribution().getServer(ConfigManager.getSelectedServer()).getMinecraftVersion())){
                     ConfigManager.setJava8Executable(m.result)
                 } else {
                     ConfigManager.setJava17Executable(m.result)
@@ -346,7 +349,14 @@ function asyncSystemScan(mcVersion, launchAfter = true){
                     remote.getCurrentWindow().setProgressBar(-1)
 
                     // Extraction completed successfully.
-                    ConfigManager.setJavaExecutable(m.args[0])
+                    if(Util.mcVersionAtLeast("1.16", DistroManager.getDistribution().getServer(ConfigManager.getSelectedServer()).getMinecraftVersion())){
+                        ConfigManager.setJava17Executable(m.args[0])
+
+                    }
+                    else {
+                        ConfigManager.setJava8Executable(m.args[0])
+
+                    }
                     ConfigManager.save()
 
                     if(extractListener != null){
