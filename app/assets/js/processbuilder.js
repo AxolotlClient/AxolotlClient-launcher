@@ -199,7 +199,6 @@ class ProcessBuilder {
 
         //Construct Mods
         const modArg = this.constructModArguments()
-
         args.push('-Dfabric.addMods='+modArg)
 
         // Classpath Argument
@@ -283,6 +282,10 @@ class ProcessBuilder {
         //Construct Mods
         const modArg = this.constructModArguments()
 
+        //Quilt
+        args.push('-Dloader.addMods='+modArg)
+
+        //Fabric
         args.push('-Dfabric.addMods='+modArg)
 
         // Java Arguments
