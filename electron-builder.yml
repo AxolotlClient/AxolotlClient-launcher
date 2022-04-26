@@ -5,7 +5,7 @@ artifactName: '${productName}-${version}.${ext}'
 copyright: 'Copyright © MoehreAG, Pwatoos66, Daniel Scalzi'
 
 asar: true
-compression: 'maximum'
+compression: 'store'
 
 files:
   - '!{dist,.gitignore,.vscode,docs,dev-app-update.yml,.travis.yml,.nvmrc,.eslintrc.json,build.js}'
