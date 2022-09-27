@@ -1,3 +1,7 @@
+# This repository is no longer updated.
+
+The codebase was just too unfamiliar to work with in the long run, that's why the entire thing has been rewritten [here](https://github.com/AxolotlClient/launcher)!
+
 <p align="center"><img src="./app/assets/images/SealCircle.png" width="150px" height="150px" alt="AxolotlClient"></p>
 
 <h1 align="center">AxolotlClient</h1>
